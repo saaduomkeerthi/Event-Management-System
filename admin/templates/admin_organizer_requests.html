@@ -1,0 +1,656 @@
+{% extends "base_admin.html" %}
+{% block admin_content %}
+<style>
+    :root {
+        --primary-color: #4361ee;
+        --secondary-color: #3f37c9;
+        --success-color: #06ffa5;
+        --danger-color: #ff006e;
+        --info-color: #00b4d8;
+        --warning-color: #ffbe0b;
+        --light-bg: #f8f9fa;
+        --dark-text: #2b2d42;
+        --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    body {
+        background-color: #f5f7ff;
+        color: var(--dark-text);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .h3, h3 {
+        font-weight: 700;
+        color: var(--dark-text);
+        position: relative;
+        padding-bottom: 10px;
+    }
+    
+    .h3:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        border-radius: 3px;
+    }
+    
+    .card {
+        transition: var(--transition);
+        border: none;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: var(--card-shadow);
+        background: white;
+    }
+    
+    .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    }
+    
+    .card-header {
+        /* background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); */
+        color: white;
+        border: none;
+        padding: 1.25rem 1.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .card-header:before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+        transform: rotate(45deg);
+    }
+    
+    .card-header h6 {
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 30px;
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: var(--transition);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .badge:hover {
+        transform: scale(1.05);
+    }
+    
+    .badge-primary {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    }
+    
+    .badge-info {
+        background: linear-gradient(135deg, var(--info-color), #0077b6);
+    }
+    
+    .badge-success {
+        background: linear-gradient(135deg, var(--success-color), #00b894);
+    }
+    
+    .badge-danger {
+        background: linear-gradient(135deg, var(--danger-color), #d63031);
+    }
+    
+    .icon-circle {
+        height: 3rem;
+        width: 3rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+    
+    .icon-circle:hover {
+        transform: scale(1.1);
+    }
+    
+    .icon-circle i {
+        font-size: 1.25rem;
+    }
+    
+    .table-responsive {
+        border-radius: 0 0 16px 16px;
+        overflow: hidden;
+    }
+    
+    table {
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+    }
+    
+    thead tr {
+        background: linear-gradient(135deg, #495057, #343a40);
+        color: white;
+    }
+    
+    thead th {
+        padding: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+        border: none;
+        position: relative;
+    }
+    
+    thead th:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    tbody tr {
+        transition: var(--transition);
+        background: white;
+    }
+    
+    tbody tr:hover {
+        background-color: #f8f9fa;
+        transform: scale(1.01);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    tbody td {
+        padding: 1rem;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
+    }
+    
+    .action-btn {
+        transition: var(--transition);
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .action-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .btn-success {
+        background: linear-gradient(135deg, var(--success-color), #00b894);
+    }
+    
+    .btn-danger {
+        background: linear-gradient(135deg, var(--danger-color), #d63031);
+    }
+    
+    .btn-info {
+        background: linear-gradient(135deg, var(--info-color), #0077b6);
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(78, 115, 223, 0.3);
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(78, 115, 223, 0.4);
+    }
+    
+    .form-control {
+        border-radius: 10px;
+        border: 1px solid #d1d3e2;
+        padding: 0.75rem 1rem;
+        transition: var(--transition);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+    
+    .form-control:focus {
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        border-color: var(--primary-color);
+    }
+    
+    .modal-content {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+    }
+    
+    .modal-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border: none;
+        padding: 1.5rem;
+        position: relative;
+    }
+    
+    .modal-header:before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+        transform: rotate(45deg);
+    }
+    
+    .modal-header h5 {
+        font-weight: 600;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .modal-body {
+        padding: 2rem;
+    }
+    
+    .modal-footer {
+        border-top: 1px solid #e9ecef;
+        padding: 1.5rem;
+    }
+    
+    .text-center.py-5 {
+        padding: 4rem 1.5rem;
+    }
+    
+    .text-center.py-5 i {
+        font-size: 5rem;
+        color: #dee2e6;
+        margin-bottom: 1.5rem;
+    }
+    
+    .bg-light {
+        background-color: #f8f9fa !important;
+        border-radius: 12px;
+    }
+    
+    /* Animation for table rows */
+    tbody tr {
+        animation: fadeIn 0.5s ease-out;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Staggered animation for table rows */
+    tbody tr:nth-child(1) { animation-delay: 0.05s; }
+    tbody tr:nth-child(2) { animation-delay: 0.1s; }
+    tbody tr:nth-child(3) { animation-delay: 0.15s; }
+    tbody tr:nth-child(4) { animation-delay: 0.2s; }
+    tbody tr:nth-child(5) { animation-delay: 0.25s; }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .card-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        
+        thead {
+            display: none;
+        }
+        
+        tbody tr {
+            display: block;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        tbody td {
+            display: block;
+            text-align: right;
+            padding: 0.75rem;
+            position: relative;
+            padding-left: 50%;
+            border-bottom: none;
+        }
+        
+        tbody td:before {
+            content: attr(data-label);
+            position: absolute;
+            left: 15px;
+            width: 45%;
+            padding-right: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .action-btn {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+    }
+    
+    /* Search bar styling */
+    .input-group {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    
+    .input-group .form-control {
+        border-right: none;
+        padding: 0.75rem 1.25rem;
+    }
+    
+    .input-group .btn {
+        border-left: none;
+        padding: 0.75rem 1.25rem;
+    }
+    
+    .input-group .btn-secondary {
+        background: #6c757d;
+        border-color: #6c757d;
+    }
+</style>
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h1 class="h3 mb-0 text-gray-800">Organizer Requests</h1>
+        <p class="text-gray-500 mb-0">Manage and review organizer applications</p>
+    </div>
+</div>
+
+<!-- 🔎 Search Form -->
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('admin.organizer_requests') }}" class="form-inline">
+            <div class="input-group w-100">
+                <input type="text" name="q" class="form-control bg-light border-0 small" 
+                       placeholder="Search by name, email, organization..."
+                       value="{{ search_query }}" aria-label="Search" aria-describedby="basic-addon2">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search fa-sm"></i>
+                    </button>
+                    {% if search_query %}
+                    <a href="{{ url_for('admin.organizer_requests') }}" class="btn btn-secondary">
+                        <i class="fas fa-times fa-sm"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <!-- Pending Requests -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-column flex-md-row justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary">Pending Requests</h6>
+                <div class="mt-2 mt-md-0">
+                    <span class="badge badge-primary badge-pill">{{ pending_requests|length }} Pending</span>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                {% if pending_requests %}
+                <div class="table-responsive">
+                    <table class="table table-hover" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th class="px-4">User</th>
+                                <th>Email</th>
+                                <th>Organization</th>
+                                <th>Request Date</th>
+                                <th>User Since</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for req in pending_requests %}
+                            <tr class="align-middle">
+                                <td class="px-4" data-label="User">
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-circle bg-primary">
+                                            <i class="fas fa-user text-white"></i>
+                                        </div>
+                                        <div class="ms-3">
+                                            <div class="fw-bold">{{ req.name }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td data-label="Email">{{ req.email }}</td>
+                                <td data-label="Organization">{{ req.organization }}</td>
+                                <td data-label="Request Date">{{ req.request_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td data-label="User Since">{{ req.user_created.strftime('%Y-%m-%d') }}</td>
+                                <td data-label="Actions">
+                                    <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-2 action-buttons">
+                                        <form action="{{ url_for('admin.approve_organizer_request', request_id=req.request_id) }}" method="POST" class="d-inline">
+                                            <button type="submit" class="btn btn-success btn-sm action-btn">
+                                                <i class="fas fa-check"></i> Approve
+                                            </button>
+                                        </form>
+                                        <form action="{{ url_for('admin.reject_organizer_request', request_id=req.request_id) }}" method="POST" class="d-inline">
+                                            <button type="submit" class="btn btn-danger btn-sm action-btn">
+                                                <i class="fas fa-times"></i> Reject
+                                            </button>
+                                        </form>
+                                        <button type="button" class="btn btn-info btn-sm action-btn view-reason-btn" 
+                                                data-bs-toggle="modal" data-bs-target="#reasonModal" 
+                                                data-reason="{{ req.reason }}" data-name="{{ req.name }}">
+                                            <i class="fas fa-eye"></i> View Reason
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <div class="rounded-circle bg-light p-4 d-inline-block mb-4">
+                        <i class="fas fa-inbox fa-3x text-gray-400"></i>
+                    </div>
+                    <h4 class="text-gray-700 mb-2">No Pending Requests</h4>
+                    <p class="text-gray-500">There are no organizer requests waiting for your review.</p>
+                </div>
+                {% endif %}
+            </div>
+            {% if total_pending_pages > 1 %}
+<nav aria-label="Pending pagination">
+    <ul class="pagination justify-content-center my-3">
+        {% if page_pending > 1 %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('admin.organizer_requests', q=search_query, page_pending=page_pending-1, page_processed=page_processed) }}">Previous</a>
+        </li>
+        {% endif %}
+        {% for p in range(1, total_pending_pages+1) %}
+        <li class="page-item {% if p == page_pending %}active{% endif %}">
+            <a class="page-link" href="{{ url_for('admin.organizer_requests', q=search_query, page_pending=p, page_processed=page_processed) }}">{{ p }}</a>
+        </li>
+        {% endfor %}
+        {% if page_pending < total_pending_pages %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('admin.organizer_requests', q=search_query, page_pending=page_pending+1, page_processed=page_processed) }}">Next</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+        </div>
+        
+        <!-- Processed Requests -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-column flex-md-row justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary">Processed Requests History</h6>
+                <div class="mt-2 mt-md-0">
+                    <span class="badge badge-info badge-pill">{{ processed_requests|length }} Processed</span>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                {% if processed_requests %}
+                <div class="table-responsive">
+                    <table class="table table-hover" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th class="px-4">User</th>
+                                <th>Email</th>
+                                <th>Organization</th>
+                                <th>Request Date</th>
+                                <th>Status</th>
+                                <th>Processed Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for req in processed_requests %}
+                            <tr class="align-middle">
+                                <td class="px-4" data-label="User">
+                                    <div class="d-flex align-items-center">
+                                        <div class="icon-circle 
+                                            {% if req.status == 'approved' %}bg-success
+                                            {% else %}bg-danger{% endif %}">
+                                            <i class="fas fa-user text-white"></i>
+                                        </div>
+                                        <div class="ms-3">
+                                            <div class="fw-bold">{{ req.user_name }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td data-label="Email">{{ req.email }}</td>
+                                <td data-label="Organization">{{ req.organization }}</td>
+                                <td data-label="Request Date">{{ req.request_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td data-label="Status">
+                                    {% if req.status == 'approved' %}
+                                    <span class="badge bg-success badge-pill">Approved</span>
+                                    {% else %}
+                                    <span class="badge bg-danger badge-pill">Rejected</span>
+                                    {% endif %}
+                                </td>
+                                <td data-label="Processed Date">{{ req.processed_date.strftime('%Y-%m-%d %H:%M') if req.processed_date else 'N/A' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <div class="rounded-circle bg-light p-4 d-inline-block mb-4">
+                        <i class="fas fa-history fa-3x text-gray-400"></i>
+                    </div>
+                    <h4 class="text-gray-700 mb-2">No Processed Requests</h4>
+                    <p class="text-gray-500">There are no processed organizer requests in the history.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% if total_processed_pages > 1 %}
+<nav aria-label="Processed pagination">
+    <ul class="pagination justify-content-center my-3">
+        {% if page_processed > 1 %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('admin.organizer_requests', q=search_query, page_processed=page_processed-1, page_pending=page_pending) }}">Previous</a>
+        </li>
+        {% endif %}
+        {% for p in range(1, total_processed_pages+1) %}
+        <li class="page-item {% if p == page_processed %}active{% endif %}">
+            <a class="page-link" href="{{ url_for('admin.organizer_requests', q=search_query, page_processed=p, page_pending=page_pending) }}">{{ p }}</a>
+        </li>
+        {% endfor %}
+        {% if page_processed < total_processed_pages %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('admin.organizer_requests', q=search_query, page_processed=page_processed+1, page_pending=page_pending) }}">Next</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+</div>
+
+<!-- Single Reason Modal -->
+<div class="modal fade" id="reasonModal" tabindex="-1" aria-labelledby="reasonModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reasonModalLabel">Reason for Becoming Organizer</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="icon-circle bg-primary me-3">
+                        <i class="fas fa-user text-white"></i>
+                    </div>
+                    <div>
+                        <h6 id="modalUserName" class="mb-0 fw-bold">User Name</h6>
+                        <small class="text-muted" id="modalUserEmail">user@example.com</small>
+                    </div>
+                </div>
+                <div class="p-4 bg-light rounded-3">
+                    <p class="mb-0" id="modalReasonText">Reason will appear here...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle view reason button clicks
+        document.querySelectorAll('.view-reason-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const reason = this.getAttribute('data-reason');
+                const name = this.getAttribute('data-name');
+                
+                // Update modal content
+                document.getElementById('modalReasonText').textContent = reason;
+                document.getElementById('modalUserName').textContent = name;
+                
+                // Find the email from the table row
+                const row = this.closest('tr');
+                const email = row.querySelector('td:nth-child(2)').textContent;
+                document.getElementById('modalUserEmail').textContent = email;
+            });
+        });
+    });
+</script>
+{% endblock %}

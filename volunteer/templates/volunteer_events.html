@@ -1,0 +1,169 @@
+{% extends "base_volunteer.html" %}
+
+{% block title %}Available Events{% endblock %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Available Events</h1>
+    <div class="d-flex">
+        <div class="me-2">
+            <select class="form-select" id="categoryFilter">
+                <option value="">All Categories</option>
+                <option value="conference">Conference</option>
+                <option value="workshop">Workshop</option>
+                <option value="seminar">Seminar</option>
+                <option value="festival">Festival</option>
+                <option value="sports">Sports</option>
+            </select>
+        </div>
+        <div class="input-group" style="width: 250px;">
+            <input type="text" class="form-control" placeholder="Search events..." id="searchInput">
+            <button class="btn btn-outline-secondary" type="button" id="searchButton">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Events Grid -->
+<div class="row" id="eventsContainer">
+    {% for event in events %}
+    <div class="col-lg-4 col-md-6 mb-4 event-item" data-category="{{ event.category }}">
+        <div class="card event-card h-100">
+            <div class="position-relative">
+                <img src="{{ event.image_url or '/static/img/event-placeholder.jpg' }}" class="card-img-top event-image" alt="{{ event.title }}">
+                <div class="position-absolute top-0 end-0 m-2">
+                    <span class="badge bg-{{ 'success' if event.status == 'upcoming' else 'secondary' }} badge-volunteer">
+                        {{ event.status|title }}
+                    </span>
+                </div>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ event.title }}</h5>
+                <p class="card-text text-muted">{{ event.description|default('', true)|truncate(100) }}</p>
+
+
+                
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div>
+                        <i class="fas fa-map-marker-alt text-primary me-1"></i>
+                        <span class="text-muted small">{{ event.location }}</span>
+                    </div>
+                    <div>
+                        <i class="fas fa-users text-primary me-1"></i>
+                        <span class="text-muted small">{{ event.volunteers_registered }}/{{ event.volunteer_required }} volunteers</span>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <i class="fas fa-calendar text-primary me-1"></i>
+                        <span class="text-muted small">{{ event.event_date }}</span>
+                    </div>
+                    <div>
+                        <i class="fas fa-clock text-primary me-1"></i>
+                        <span class="text-muted small">{{ event.event_time }}</span>
+                    </div>
+                </div>
+                
+                <div class="progress mb-3" style="height: 10px;">
+    <div class="progress-bar bg-success" role="progressbar" 
+         style="width: 100%;" 
+         aria-valuenow="{{ event.volunteers_registered }}" 
+         aria-valuemin="0" aria-valuemax="{{ event.volunteer_required }}">
+        {{ event.volunteers_registered }}/{{ event.volunteer_required }}
+    </div>
+</div>
+            </div>
+            <div class="card-footer bg-transparent">
+                <div class="d-grid gap-2">
+                    {% if event.is_registered %}
+                    <button class="btn btn-success" disabled>
+                        <i class="fas fa-check me-1"></i> Already Registered
+                    </button>
+                    {% else %}
+                    <a href="{{ url_for('volunteer.event_detail', event_id=event.event_id) }}" class="btn btn-primary">
+                        <i class="fas fa-info-circle me-1"></i> View Details & Register
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12">
+        <div class="text-center py-5">
+            <i class="fas fa-calendar-times fa-4x text-gray-300 mb-3"></i>
+            <h4 class="text-gray-500">No Events Available</h4>
+            <p class="text-muted">There are currently no events seeking volunteers. Please check back later.</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+{% if total_pages > 1 %}
+<nav aria-label="Event pagination">
+    <ul class="pagination justify-content-center">
+        <li class="page-item {% if page == 1 %}disabled{% endif %}">
+            <a class="page-link" href="{{ url_for('volunteer.events', page=page-1) }}">Previous</a>
+        </li>
+
+        {% for p in range(1, total_pages + 1) %}
+        <li class="page-item {% if p == page %}active{% endif %}">
+            <a class="page-link" href="{{ url_for('volunteer.events', page=p) }}">{{ p }}</a>
+        </li>
+        {% endfor %}
+
+        <li class="page-item {% if page == total_pages %}disabled{% endif %}">
+            <a class="page-link" href="{{ url_for('volunteer.events', page=page+1) }}">Next</a>
+        </li>
+    </ul>
+</nav>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Event filtering functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const categoryFilter = document.getElementById('categoryFilter');
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const eventItems = document.querySelectorAll('.event-item');
+    
+    function filterEvents() {
+        const categoryValue = categoryFilter.value.toLowerCase();
+        const searchValue = searchInput.value.toLowerCase();
+        
+        eventItems.forEach(item => {
+            const eventCategory = item.getAttribute('data-category').toLowerCase();
+            const eventTitle = item.querySelector('.card-title').textContent.toLowerCase();
+            const eventDesc = item.querySelector('.card-text').textContent.toLowerCase();
+            const eventLocation = item.querySelector('.fa-map-marker-alt').nextSibling.textContent.toLowerCase();
+            
+            const categoryMatch = categoryValue === '' || eventCategory === categoryValue;
+            const searchMatch = searchValue === '' || 
+                               eventTitle.includes(searchValue) || 
+                               eventDesc.includes(searchValue) ||
+                               eventLocation.includes(searchValue);
+            
+            if (categoryMatch && searchMatch) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+    
+    categoryFilter.addEventListener('change', filterEvents);
+    searchButton.addEventListener('click', filterEvents);
+    searchInput.addEventListener('keyup', function(event) {
+        if (event.key === 'Enter') {
+            filterEvents();
+        }
+    });
+}); 
+</script>
+{% endblock %}

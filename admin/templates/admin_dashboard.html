@@ -1,0 +1,460 @@
+<!-- templates/admin/dashboard.html -->
+{% extends "base_admin.html" %}
+
+{% block admin_content %}
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+    <!-- <a href="{{ url_for('admin.reports') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"> -->
+        
+</div>
+
+<!-- Welcome Message -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card dashboard-card welcome-card">
+            <div class="card-body">
+                <h5 class="card-title">Welcome back, {{ admin_name }}!</h5>
+                <p class="card-text">Here's what's happening with your platform today.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Content Row -->
+<div class="row">
+    <!-- Volunteers Card -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card dashboard-card card-border-left-primary h-100 hover-lift">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Volunteers</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ volunteers_count }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Participants Card -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card dashboard-card card-border-left-success h-100 hover-lift">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Participants</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ participants_count }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-user-check fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Events Card -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card dashboard-card card-border-left-info h-100 hover-lift">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total Events
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_events }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ongoing Events Card -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card dashboard-card card-border-left-warning h-100 hover-lift">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Ongoing Events</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ ongoing_events }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar-day fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upcoming Events Row -->
+<div class="row">
+    <div class="col-12">
+        <div class="card dashboard-card mb-4 table-hover-container">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-danger">Upcoming Events</h6>
+                <a href="{{ url_for('admin.events') }}" class="btn btn-sm btn-primary btn-hover-lift">View All Events</a>
+            </div>
+            <div class="card-body">
+                {% if upcoming_events %}
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Event Name</th>
+                                <th>Organizer</th>
+                                <th>Date</th>
+                                <th>Participants</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for event in upcoming_events %}
+                            <tr class="hover-lift-sm">
+                                <td>{{ event.title }}</td>
+                                <td>{{ event.organizer_name }}</td>
+                                <td>{{ event.date }}</td>
+                                <td>{{ event.participant_count }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- ✅ Show pagination only if more than 1 page -->
+                {% if pagination.pages > 1 %}
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        {% if pagination.has_prev %}
+                        <li class="page-item">
+                            <a class="page-link page-link-hover" href="{{ url_for('admin.dashboard', page=pagination.page-1) }}">Previous</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled"><span class="page-link">Previous</span></li>
+                        {% endif %}
+
+                        {% for p in pagination.iter_pages() %}
+                            {% if p %}
+                            <li class="page-item {% if p == pagination.page %}active{% endif %}">
+                                <a class="page-link page-link-hover" href="{{ url_for('admin.dashboard', page=p) }}">{{ p }}</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled"><span class="page-link">…</span></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if pagination.has_next %}
+                        <li class="page-item">
+                            <a class="page-link page-link-hover" href="{{ url_for('admin.dashboard', page=pagination.page+1) }}">Next</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled"><span class="page-link">Next</span></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+                {% else %}
+                <p class="text-center text-muted">No upcoming events.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row">
+    <!-- Line Chart: Attendance Trends -->
+    <div class="col-xl-6 col-lg-6">
+        <div class="card dashboard-card mb-4 chart-hover">
+            <div class="card-header"><h6 class="m-0 font-weight-bold text-primary">Yearly Attendance</h6></div>
+            <div class="card-body"><canvas id="attendanceChart"></canvas></div>
+        </div>
+    </div>
+
+    <!-- Bar Chart: Users -->
+    <div class="col-xl-6 col-lg-6">
+        <div class="card dashboard-card mb-4 chart-hover">
+            <div class="card-header"><h6 class="m-0 font-weight-bold text-success">User Roles</h6></div>
+            <div class="card-body"><canvas id="engagementChart"></canvas></div>
+        </div>
+    </div>
+</div>
+
+<!-- Doughnut Chart: Event Status -->
+<div class="row">
+    <div class="col-xl-6 col-lg-6">
+        <div class="card dashboard-card mb-4 chart-hover">
+            <div class="card-header"><h6 class="m-0 font-weight-bold text-info">Event Status Distribution</h6></div>
+            <div class="card-body"><canvas id="quickStatsChart"></canvas></div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Reset any conflicting transforms first */
+    .dashboard-card {
+        transform: translateY(0) translateZ(0);
+        backface-visibility: hidden;
+        will-change: transform;
+    }
+    
+    /* Hover effects with improved performance */
+    .hover-lift {
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        transform: translateY(0) translateZ(0);
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-5px) translateZ(0);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+    
+    .hover-lift-sm {
+        transition: transform 0.2s ease-out;
+    }
+    
+    .hover-lift-sm:hover {
+        transform: translateY(-2px);
+    }
+    
+    .btn-hover-lift {
+        transition: transform 0.2s ease-out;
+    }
+    
+    .btn-hover-lift:hover {
+        transform: translateY(-2px);
+    }
+    
+    .welcome-card {
+        transition: all 0.4s ease;
+    }
+    
+    .welcome-card:hover {
+        background: linear-gradient(to right, #f8f9fc, #e9ecef);
+    }
+    
+    .table-hover-animate tbody tr {
+        transition: all 0.2s ease;
+    }
+    
+    .table-hover-animate tbody tr:hover {
+        background-color: rgba(78, 115, 223, 0.05);
+        transform: translateX(5px);
+    }
+    
+    .page-link-hover {
+        transition: all 0.2s ease;
+    }
+    
+    .page-link-hover:hover {
+        background-color: #4e73df;
+        color: white;
+        transform: scale(1.05);
+    }
+    .card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+    
+    .chart-hover {
+        transition: transform 0.3s ease;
+    }
+    
+    .chart-hover:hover {
+        transform: scale(1.05);
+    }
+    
+    /* Smooth scrolling for the entire page */
+    html {
+        scroll-behavior: smooth;
+    }
+    
+    /* Fade-in animation for page elements */
+    .dashboard-card {
+        animation: fadeIn 0.6s ease-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Staggered animation for cards */
+    .col-xl-3:nth-child(1) .dashboard-card { animation-delay: 0.1s; }
+    .col-xl-3:nth-child(2) .dashboard-card { animation-delay: 0.2s; }
+    .col-xl-3:nth-child(3) .dashboard-card { animation-delay: 0.3s; }
+    .col-xl-3:nth-child(4) .dashboard-card { animation-delay: 0.4s; }
+    
+    /* Fix for potential transform conflicts */
+    .card-body, .col-auto, .row.no-gutters {
+        transform: translateZ(0);
+    }
+    
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add scroll-triggered animations
+    document.addEventListener('DOMContentLoaded', function() {
+        // Remove the opacity manipulation that might conflict with hover effects
+        const animatedElements = document.querySelectorAll('.dashboard-card');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animated-in');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        animatedElements.forEach(el => {
+            observer.observe(el);
+        });
+        
+        // Modified parallax effect that doesn't interfere with hover transforms
+        const welcomeCard = document.querySelector('.welcome-card');
+        if (welcomeCard) {
+            let isHovering = false;
+            
+            welcomeCard.addEventListener('mouseenter', function() {
+                isHovering = true;
+            });
+            
+            welcomeCard.addEventListener('mouseleave', function() {
+                isHovering = false;
+            });
+            
+            window.addEventListener('scroll', function() {
+                if (!isHovering) {
+                    const scrolled = window.pageYOffset;
+                    const rate = scrolled * -0.1; // Reduced parallax effect
+                    welcomeCard.style.transform = 'translateY(' + rate + 'px)';
+                }
+            });
+        }
+    });
+ 
+    // 📈 Attendance Line Chart (Month-wise) - Bright Colors
+    new Chart(document.getElementById("attendanceChart"), {
+        type: "line",
+        data: {
+            labels: {{ attendance_labels|tojson }},
+            datasets: [{
+                label: "Monthly Registrations",
+                data: {{ attendance_data|tojson }},
+                borderColor: "#FF6B6B", // Bright coral red
+                backgroundColor: "rgba(255, 107, 107, 0.2)",
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointBackgroundColor: "#FF6B6B",
+                pointHoverRadius: 6,
+                pointHoverBackgroundColor: "#FF6B6B",
+                pointHoverBorderColor: "#FF6B6B",
+                pointHoverBorderWidth: 2
+            }]
+        },
+        options: {
+            scales: {
+                x: { title: { display: true, text: "Month" } },
+                y: { title: { display: true, text: "Registrations" }, beginAtZero: true }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index'
+            },
+            animations: {
+                tension: {
+                    duration: 1000,
+                    easing: 'linear'
+                }
+            }
+        }
+    });
+
+    // 📊 User Roles Bar Chart - Bright Colors
+    new Chart(document.getElementById("engagementChart"), {
+        type: "bar",
+        data: {
+            labels: {{ role_labels|tojson }},
+            datasets: [{
+                label: "Users",
+                data: {{ role_data|tojson }},
+               backgroundColor: [
+    "#00C853", // Bright Green
+    "#9C27B0", // Bold Purple
+    "#E91E63", // Bold Pink
+    "#FF9800"  // Bright Orange
+],
+hoverBackgroundColor: [
+    "#00E676", // Neon Green
+    "#BA68C8", // Lighter Bold Purple
+    "#F50057", // Hot Pink
+    "#FB8C00"  // Darker Vibrant Orange
+],
+                borderWidth: 0,
+                borderRadius: 4,
+                hoverBorderRadius: 4
+            }]
+        },
+        options: {
+            animation: {
+                duration: 2000
+            }
+        }
+    });
+
+    // 📊 Quick Stats Doughnut Chart (Event Statuses) - Bright Colors
+    const ctxQuick = document.getElementById("quickStatsChart");
+    if (ctxQuick) {
+        new Chart(ctxQuick, {
+            type: "doughnut",
+            data: {
+                labels: {{ event_status_labels|tojson }},
+                datasets: [{
+                    data: {{ event_status_data|tojson }},
+                    backgroundColor: [
+    "#FFC107", // Bright Amber Yellow - Upcoming
+    "#00BCD4", // Bold Cyan/Teal - Ongoing
+    "#F44336", // Bold Red - Completed
+    "#9C27B0", // Bold Purple - Cancelled
+    "#2196F3"  // Bright Blue - Other statuses
+],
+hoverBackgroundColor: [
+    "#FFB300", // Deeper Amber Yellow
+    "#0097A7", // Strong Teal
+    "#D32F2F", // Deeper Red
+    "#7B1FA2", // Deeper Purple
+    "#1976D2"  // Deeper Blue
+],
+                    hoverOffset: 8
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: { position: "bottom" }
+                },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}

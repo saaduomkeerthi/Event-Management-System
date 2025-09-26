@@ -1,0 +1,133 @@
+{% extends "base_participant.html" %}
+{% block title %}Events{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h3 class="mb-4 text-center text-primary fw-bold">📅 Events</h3>
+
+    {# Upcoming Events #}
+    <h4 class="mt-4 mb-3 text-success border-start border-4 ps-3">Upcoming Events</h4>
+    {% set upcoming = [] %}
+    <div class="row g-4">
+        {% for event in events %}
+            {% if event.event_date > today %}
+                {% set _ = upcoming.append(event) %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card shadow-sm h-100 border-success">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-success">{{ event.title }}</h5>
+                            <p class="card-text text-muted small">
+                                <strong>Date:</strong> {{ event.event_date.strftime('%B %d, %Y') }} <br>
+                                <strong>Location:</strong> {{ event.location }} <br>
+                                <strong>Description:</strong> 
+                                {{ event.description[:100] }}{% if event.description|length > 100 %}...{% endif %}
+                            </p>
+                            <div class="mt-auto">
+                                {% if event.is_registered %}
+                                    <span class="badge bg-success">Already Registered</span>
+                                {% else %}
+                                    <a href="{{ url_for('participant.register_event', event_id=event.event_id) }}" 
+                                       class="btn btn-outline-success btn-sm w-100 shadow-sm">
+                                        Register
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+        {% if upcoming|length == 0 %}
+            <div class="alert alert-info">No upcoming events available at the moment.</div>
+        {% endif %}
+    </div>
+
+    {# Ongoing Events #}
+    <h4 class="mt-5 mb-3 text-warning border-start border-4 ps-3">Ongoing Events</h4>
+    {% set ongoing = [] %}
+    <div class="row g-4">
+        {% for event in events %}
+            {% if event.event_date == today %}
+                {% set _ = ongoing.append(event) %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card shadow-sm h-100 border-warning">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-warning">{{ event.title }}</h5>
+                            <p class="card-text text-muted small">
+                                <strong>Date:</strong> {{ event.event_date.strftime('%B %d, %Y') }} <br>
+                                <strong>Location:</strong> {{ event.location }} <br>
+                                <strong>Description:</strong> 
+                                {{ event.description[:100] }}{% if event.description|length > 100 %}...{% endif %}
+                            </p>
+                            <div class="mt-auto">
+                                {% if event.is_registered %}
+                                    <span class="badge bg-warning text-dark">Already Registered</span>
+                                {% else %}
+                                    <a href="{{ url_for('participant.register_event', event_id=event.event_id) }}" 
+                                       class="btn btn-outline-warning btn-sm w-100 shadow-sm">
+                                        Register
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+        {% if ongoing|length == 0 %}
+            <div class="alert alert-info">No ongoing events at the moment.</div>
+        {% endif %}
+    </div>
+
+    {# Completed Events #}
+    <h4 class="mt-5 mb-3 text-secondary border-start border-4 ps-3">Completed Events</h4>
+    {% set completed = [] %}
+    <div class="row g-4">
+        {% for event in events %}
+            {% if event.event_date < today %}
+                {% set _ = completed.append(event) %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card shadow-sm h-100 border-secondary">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-secondary">{{ event.title }}</h5>
+                            <p class="card-text text-muted small">
+                                <strong>Date:</strong> {{ event.event_date.strftime('%B %d, %Y') }} <br>
+                                <strong>Location:</strong> {{ event.location }} <br>
+                                <strong>Description:</strong> 
+                                {{ event.description[:100] }}{% if event.description|length > 100 %}...{% endif %}
+                            </p>
+                            <div class="mt-auto">
+                                <span class="badge bg-secondary">Completed</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+        {% if completed|length == 0 %}
+            <div class="alert alert-info">No completed events yet.</div>
+        {% endif %}
+    </div>
+
+</div>
+
+<style>
+    /* Elegant card hover effect */
+    .card:hover {
+        transform: translateY(-5px);
+        transition: all 0.3s ease;
+    }
+
+    /* Section headers styling */
+    h4.border-start {
+        padding-left: 0.75rem;
+        border-left-width: 5px !important;
+    }
+
+    /* Smaller text for event details */
+    .card-text small {
+        font-size: 0.875rem;
+    }
+    
+</style>
+{% endblock %}

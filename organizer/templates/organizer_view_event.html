@@ -1,0 +1,164 @@
+{% extends "base_organizer.html" %}
+
+{% block organizer_content %}
+<div class="event-view-container">
+
+    <!-- Event Header with Image -->
+    <div class="event-header" style="background-image: url('{{ event.image_url }}');">
+
+        <div class="overlay">
+            <h1 class="event-title">{{ event.title }}</h1>
+            <p class="event-date-location">
+                <i class="fas fa-calendar-alt me-1"></i> {{ event.event_date }} {{ event.event_time }} &nbsp; | &nbsp;
+                <i class="fas fa-map-marker-alt me-1"></i> {{ event.location }}
+            </p>
+            <span class="event-status 
+                {% if event.status == 'upcoming' %}upcoming{% elif event.status == 'ongoing' %}ongoing
+                {% elif event.status == 'completed' %}completed{% elif event.status == 'cancelled' %}cancelled{% endif %}">
+                {{ event.status|capitalize }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Event Details Section -->
+    <div class="event-details container">
+        <div class="event-description">
+            <h3>Description</h3>
+            <p>{{ event.description }}</p>
+        </div>
+
+        <div class="event-participants">
+            <h3>Participants</h3>
+            <p>{{ event.participant_count }} / {{ event.total_tickets }}</p>
+            <div class="participants-bar">
+                <div class="participants-progress" style="width: {{ (event.participant_count / (event.total_tickets|default(1))) * 100 }}%"></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+/* Container */
+.event-view-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    overflow-x: hidden;
+}
+
+/* Event Header */
+.event-header {
+    position: relative;
+    height: 400px;
+    background-size: contain;   /* show full image */
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    transition: transform 0.3s ease;
+}
+
+
+.event-header:hover {
+    transform: scale(1.01);
+}
+
+/* Overlay */
+.event-header .overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 2rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
+    color: white;
+    border-radius: 0 0 12px 12px;
+}
+
+.event-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    animation: fadeInUp 1s ease forwards;
+}
+
+.event-date-location {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    opacity: 0.9;
+}
+
+/* Status Badge */
+.event-status {
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    display: inline-block;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.event-status:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.event-status.upcoming { background: #4caf50; color: white; }
+.event-status.ongoing { background: #2196f3; color: white; }
+.event-status.completed { background: #9e9e9e; color: white; }
+.event-status.cancelled { background: #f44336; color: white; }
+
+/* Event Details */
+.event-details {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.event-details h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 0.3rem;
+}
+
+.event-description p {
+    font-size: 1.05rem;
+    line-height: 1.6;
+}
+
+.event-participants {
+    margin-top: 2rem;
+}
+
+.participants-bar {
+    width: 100%;
+    height: 15px;
+    background: #eee;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 0.5rem;
+}
+
+
+.participants-progress {
+    height: 100%;
+    background: linear-gradient(90deg, #4caf50, #81c784);
+    transition: width 1.5s ease-in-out;
+    border-radius: 10px;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .event-header { height: 300px; }
+    .event-title { font-size: 2rem; }
+}
+</style>
+{% endblock %}

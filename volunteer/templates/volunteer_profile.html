@@ -1,0 +1,119 @@
+{% extends "base_volunteer.html" %}
+
+{% block title %}Profile - Volunteer Dashboard{% endblock %}
+
+{% block content %}
+<style>
+    .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+    
+
+    /* Camera icon */
+    .upload-icon {
+        background-color: var(--accent-color);
+        color: white;
+        border-radius: 50%;
+        padding: 10px;
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.2s ease;
+    }
+    .upload-icon:hover {
+        background-color: #e64a19;
+        transform: scale(1.1);
+    }
+
+</style>
+<div class="container-fluid px-4">
+    <h1 class="mt-4 fw-bold" style="color: #00894b;">My Profile</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{{ url_for('volunteer.dashboard') }}">Dashboard</a></li>
+        <li class="breadcrumb-item active">Profile</li>
+    </ol>
+
+    <div class="row">
+        <!-- Profile Picture Section -->
+        <div class="col-lg-4">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-body text-center p-4">
+                    {% if user.profile_picture %}
+                        <div class="position-relative d-inline-block">
+                            <img src="{{ url_for('static', filename=user.profile_picture) }}"
+                                 class="img-fluid rounded-circle shadow mb-3"
+                                 alt="Profile Picture"
+                                 style="width: 220px; height: 220px; object-fit: cover; border: 5px solid #f8f9fa;">
+                            <label for="profile_picture" 
+                                   class="position-absolute bottom-0 end-0 text-white p-2 rounded-circle"
+                                   style="cursor: pointer; background-color: #ff7043;">
+                                <i class="fas fa-camera "></i>
+                            </label>
+                        </div>
+                    {% else %}
+                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3 shadow"
+                             style="width: 220px; height: 220px; border: 5px solid #f8f9fa;">
+                            <i class="fas fa-user fa-5x text-secondary"></i>
+                        </div>
+                    {% endif %}
+                    <h5 class="mt-3 fw-bold">{{ user.name }}</h5>
+                    <p class="text-muted mb-0">{{ user.email }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Form Section -->
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header text-white fw-bold bg-primary" >
+                    <i class="fas fa-user-edit me-2 "></i> Edit Profile
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="name" class="form-label fw-semibold">Full Name</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label fw-semibold">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label fw-semibold">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" value="{{ user.phone }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="skills" class="form-label fw-semibold">Skills</label>
+                            <select class="form-select" id="skills" name="skills" multiple>
+                                <option value="event_planning" {% if 'event_planning' in user.skills_list %}selected{% endif %}>Event Planning</option>
+                                <option value="customer_service" {% if 'customer_service' in user.skills_list %}selected{% endif %}>Customer Service</option>
+                                <option value="logistics" {% if 'logistics' in user.skills_list %}selected{% endif %}>Logistics</option>
+                                <option value="first_aid" {% if 'first_aid' in user.skills_list %}selected{% endif %}>First Aid</option>
+                                <option value="technical_support" {% if 'technical_support' in user.skills_list %}selected{% endif %}>Technical Support</option>
+                                <option value="marketing" {% if 'marketing' in user.skills_list %}selected{% endif %}>Marketing</option>
+                                <option value="photography" {% if 'photography' in user.skills_list %}selected{% endif %}>Photography</option>
+                                <option value="coordination" {% if 'coordination' in user.skills_list %}selected{% endif %}>Coordination</option>
+                            </select>
+                            <div class="form-text">Hold Ctrl/Cmd to select multiple skills</div>
+                        </div>
+                        <div class="mb-3 d-none">
+                            <!-- Hidden file input triggered by camera icon -->
+                            <input class="form-control" type="file" id="profile_picture" name="profile_picture">
+                        </div>
+                        <button type="submit" class="btn px-4 text-white fw-semibold"
+                                style="background-color: #388e3c; border: none;"
+                                onmouseover="this.style.backgroundColor='#2e7d32'"
+                                onmouseout="this.style.backgroundColor='#388e3c'">
+                            <i class="fas fa-save me-2"></i> Update Profile
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

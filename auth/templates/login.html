@@ -1,0 +1,445 @@
+{% extends "base.html" %}
+
+{% block title %}Login - EMS{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #4e73df;
+        --primary-hover: #3a56c4;
+        --light-bg: #f8f9fa;
+        --border-color: #dee2e6;
+    }
+    
+    .login-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    
+    .card {
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+    
+    .card-header {
+        padding: 1.5rem;
+        text-align: center;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        background: var(--primary-color);
+        color: white;
+    }
+    
+    .card-body {
+        padding: 2rem;
+    }
+    
+    .form-control {
+        border-radius: 8px;
+        padding: 12px 16px;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s;
+    }
+    
+    .form-control:focus {
+        box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.2);
+        border-color: var(--primary-color);
+    }
+    
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: #444;
+    }
+    
+    .btn-primary-custom {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 12px;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s;
+        width: 100%;
+    }
+    
+    .btn-primary-custom:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+        color: white;
+    }
+    
+    .input-group-text {
+        background-color: #f8f9fa;
+        border-radius: 8px 0 0 8px;
+    }
+    
+    .captcha-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .captcha-image {
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 5px;
+        margin-right: 10px;
+        height: 45px;
+    }
+    
+    .refresh-captcha {
+        background: none;
+        border: none;
+        color: var(--primary-color);
+        cursor: pointer;
+        font-size: 1.2rem;
+        transition: all 0.3s;
+    }
+    
+    .refresh-captcha:hover {
+        color: var(--primary-hover);
+        transform: rotate(180deg);
+    }
+    
+    .login-options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+    }
+    
+    .divider {
+        display: flex;
+        align-items: center;
+        margin: 1.5rem 0;
+        color: #6c757d;
+    }
+    
+    .divider::before, .divider::after {
+        content: "";
+        flex: 1;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .divider::before {
+        margin-right: .5em;
+    }
+    
+    .divider::after {
+        margin-left: .5em;
+    }
+    
+    .login-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+    }
+    
+    .login-link:hover {
+        text-decoration: underline;
+    }
+    
+    /* Password toggle styles - FIXED */
+    .password-toggle {
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: 100%;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #6c757d;
+        padding: 0 12px;
+        z-index: 5;
+    }
+    
+    .password-toggle:hover {
+        color: var(--primary-color);
+    }
+    
+    /* Additional style for input group */
+    .input-group {
+        position: relative;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container login-container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h4 class="mb-0"><i class="fas fa-lock me-2"></i>Login to Your Account</h4>
+                </div>
+                <div class="card-body">
+                    <form id="loginForm" method="POST" action="{{ url_for('auth.login') }}">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group mb-3">
+                                    <label for="email" class="form-label">Email Address</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                        <input type="email" class="form-control" id="email" name="email" 
+                                               placeholder="Enter your email" required>
+                                    </div>
+                                    <div id="emailError" class="text-danger mt-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                        <input type="password" class="form-control" id="password" name="password" 
+                                               placeholder="Enter your password" required style="padding-right: 45px;">
+                                        <button type="button" id="passwordToggle" class="password-toggle">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <div id="passwordError" class="text-danger mt-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group mb-4">
+                                    <label for="captcha" class="form-label">CAPTCHA Verification</label>
+                                    <div class="captcha-container">
+                                        <img src="{{ url_for('auth.generate_captcha') }}" alt="captcha" id="captchaImage" class="captcha-image">
+                                        <button type="button" id="refreshCaptcha" class="refresh-captcha">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </button>
+                                    </div>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-shield-alt"></i></span>
+                                        <input type="text" class="form-control" id="captcha" name="captcha" 
+                                               placeholder="Enter CAPTCHA text" required>
+                                    </div>
+                                    <div id="captchaError" class="text-danger mt-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary-custom py-3">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </button>
+                    </form>
+                    
+                    <div class="login-options">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">Remember me</label>
+                        </div>
+                        <a href="#" class="login-link">Forgot Password?</a>
+                    </div>
+                    
+                    <div class="divider">Don't have an account?</div>
+                    
+                    <div class="text-center">
+                        <p>Create a new account <a href="{{ url_for('auth.signup') }}" class="login-link">Sign up here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const captchaInput = document.getElementById('captcha');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+        const captchaError = document.getElementById('captchaError');
+        const captchaImage = document.getElementById('captchaImage');
+        const refreshCaptchaBtn = document.getElementById('refreshCaptcha');
+        const passwordToggle = document.getElementById('passwordToggle');
+
+        // Password visibility toggle
+        passwordToggle.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // Toggle eye icon
+            const eyeIcon = this.querySelector('i');
+            if (type === 'text') {
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        });
+
+        // Function to validate email
+        function validateEmail() {
+            const email = emailInput.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (email === '') {
+                emailError.textContent = 'Email is required';
+                emailInput.classList.add('is-invalid');
+                return false;
+            }
+            
+            if (!emailRegex.test(email)) {
+                emailError.textContent = 'Please enter a valid email address';
+                emailInput.classList.add('is-invalid');
+                return false;
+            }
+            
+            emailError.textContent = '';
+            emailInput.classList.remove('is-invalid');
+            emailInput.classList.add('is-valid');
+            return true;
+        }
+
+        // Function to validate password
+        function validatePassword() {
+            const password = passwordInput.value;
+            
+            if (password === '') {
+                passwordError.textContent = 'Password is required';
+                passwordInput.classList.add('is-invalid');
+                return false;
+            }
+            
+            // if (password.length < 6) {
+            //     passwordError.textContent = 'Password must be at least 6 characters long';
+            //     passwordInput.classList.add('is-invalid');
+            //     return false;
+            // }
+            
+            passwordError.textContent = '';
+            passwordInput.classList.remove('is-invalid');
+            passwordInput.classList.add('is-valid');
+            return true;
+        }
+
+        // Function to validate CAPTCHA
+        function validateCaptcha() {
+            const captcha = captchaInput.value.trim();
+            
+            if (captcha === '') {
+                captchaError.textContent = 'CAPTCHA is required';
+                captchaInput.classList.add('is-invalid');
+                return false;
+            }
+            
+            if (captcha.length !== 6) {
+                captchaError.textContent = 'CAPTCHA must be 6 characters long';
+                captchaInput.classList.add('is-invalid');
+                return false;
+            }
+            
+            captchaError.textContent = '';
+            captchaInput.classList.remove('is-invalid');
+            captchaInput.classList.add('is-valid');
+            return true;
+        }
+
+        // Refresh CAPTCHA
+        refreshCaptchaBtn.addEventListener('click', function() {
+            captchaImage.src = "{{ url_for('auth.generate_captcha') }}?" + new Date().getTime();
+            captchaInput.value = '';
+            captchaInput.classList.remove('is-invalid', 'is-valid');
+            captchaError.textContent = '';
+        });
+
+        // Real-time validation
+        emailInput.addEventListener('input', validateEmail);
+        passwordInput.addEventListener('input', validatePassword);
+        captchaInput.addEventListener('input', validateCaptcha);
+        
+        emailInput.addEventListener('blur', validateEmail);
+        passwordInput.addEventListener('blur', validatePassword);
+        captchaInput.addEventListener('blur', validateCaptcha);
+
+        // Form submission validation
+        loginForm.addEventListener('submit', function(event) {
+            // Prevent form submission if validation fails
+            const isEmailValid = validateEmail();
+            const isPasswordValid = validatePassword();
+            const isCaptchaValid = validateCaptcha();
+            
+            if (!isEmailValid || !isPasswordValid || !isCaptchaValid) {
+                event.preventDefault();
+                
+                // Focus on the first invalid field
+                if (!isEmailValid) {
+                    emailInput.focus();
+                } else if (!isPasswordValid) {
+                    passwordInput.focus();
+                } else {
+                    captchaInput.focus();
+                }
+                
+                // Show alert if validation fails
+                showAlert('Please fix the errors in the form before submitting.', 'danger');
+            }
+        });
+
+        // Function to show alert messages
+        function showAlert(message, type) {
+            // Remove any existing alerts
+            const existingAlert = document.querySelector('.alert');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+            
+            // Create alert element
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.setAttribute('role', 'alert');
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            // Insert alert at the top of the form
+            loginForm.prepend(alertDiv);
+            
+            // Auto-dismiss after 5 seconds
+            setTimeout(() => {
+                const bsAlert = new bootstrap.Alert(alertDiv);
+                bsAlert.close();
+            }, 5000);
+        }
+
+        // Clear validation styles when input gains focus
+        emailInput.addEventListener('focus', function() {
+            this.classList.remove('is-invalid', 'is-valid');
+            emailError.textContent = '';
+        });
+        
+        passwordInput.addEventListener('focus', function() {
+            this.classList.remove('is-invalid', 'is-valid');
+            passwordError.textContent = '';
+        });
+        
+        captchaInput.addEventListener('focus', function() {
+            this.classList.remove('is-invalid', 'is-valid');
+            captchaError.textContent = '';
+        });
+
+        // Check if there are any pre-existing values and validate them after a short delay
+        setTimeout(() => {
+            if (emailInput.value) validateEmail();
+            if (passwordInput.value) validatePassword();
+            if (captchaInput.value) validateCaptcha();
+        }, 100);
+    });
+</script>
+{% endblock %} 

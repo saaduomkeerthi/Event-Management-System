@@ -1,0 +1,62 @@
+{% extends "base_participant.html" %}
+{% block title %}My Registrations{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Page Header -->
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-primary">📅 My Registered Events</h2>
+        <p class="text-muted">Here are all the events you’ve registered for</p>
+    </div>
+
+    {% if registrations %}
+    <!-- Registrations Table -->
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Event</th>
+                            <th>Date</th>
+                            <!-- <th>Location</th> -->
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reg in registrations %}
+                        <tr>
+                            <td class="fw-semibold">{{ reg.title }}</td>
+                            <td>{{ reg.event_date.strftime('%B %d, %Y') }}</td>
+                            <!-- <td>{{ reg.location }}</td> -->
+                            <td>
+    {% if reg.status == "Registered" %}
+        <span class="badge bg-info text-dark">{{ reg.status }}</span>
+    {% elif reg.status == "Completed" %}
+        <span class="badge bg-success">{{ reg.status }}</span>
+    {% elif reg.status == "Cancelled" %}
+        <span class="badge bg-danger">{{ reg.status }}</span>
+    {% else %}
+        <span class="badge bg-secondary">{{ reg.status }}</span>
+    {% endif %}
+</td>
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <!-- Empty State -->
+    <div class="card shadow-lg border-0 rounded-4 text-center p-5">
+        <h4 class="fw-bold text-muted">😕 No Registrations Yet</h4>
+        <p class="text-muted">Looks like you haven’t registered for any events.</p>
+        <a href="{{ url_for('participant.events') }}" class="btn btn-primary rounded-pill px-4 mt-3">
+            Browse Events
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

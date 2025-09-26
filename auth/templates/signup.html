@@ -1,0 +1,390 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up - EMS{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #4e73df;
+        --primary-hover: #3a56c4;
+        --light-bg: #f8f9fa;
+        --border-color: #dee2e6;
+    }
+    
+    .signup-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    
+    .card {
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+    
+    .card-header {
+        padding: 1.5rem;
+        text-align: center;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        background: var(--primary-color);
+        color: white;
+    }
+    
+    .card-body {
+        padding: 2rem;
+    }
+    
+    .form-control {
+        border-radius: 8px;
+        padding: 12px 16px;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s;
+    }
+    
+    .form-control:focus {
+        box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.2);
+        border-color: var(--primary-color);
+    }
+    
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: #444;
+    }
+    
+    .btn-primary-custom {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 12px;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s;
+        width: 100%;
+    }
+    
+    .btn-primary-custom:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+        color: white;
+    }
+    
+    .input-group-text {
+        background-color: #f8f9fa;
+        border-radius: 8px 0 0 8px;
+    }
+    
+    .divider {
+        display: flex;
+        align-items: center;
+        margin: 1.5rem 0;
+        color: #6c757d;
+    }
+    
+    .divider::before, .divider::after {
+        content: "";
+        flex: 1;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .divider::before {
+        margin-right: .5em;
+    }
+    
+    .divider::after {
+        margin-left: .5em;
+    }
+    
+    .login-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+    }
+    
+    .login-link:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container signup-container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h4 class="mb-0"><i class="fas fa-user-plus me-2"></i>Create Your Account</h4>
+                </div>
+                <div class="card-body">
+                    <form id="signupForm" method="POST" action="{{ url_for('auth.signup') }}">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group mb-3">
+                                    <label for="name" class="form-label">Full Name</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        <input type="text" class="form-control" id="name" name="name" 
+                                               placeholder="Enter your full name" required>
+                                    </div>
+                                    <div id="nameError" class="text-danger mt-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group mb-3">
+                                    <label for="email" class="form-label">Email Address</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                        <input type="email" class="form-control" id="email" name="email" 
+                                               placeholder="Enter your email" required>
+                                    </div>
+                                    <div id="emailError" class="text-danger mt-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group mb-3">
+                                    <label for="password" class="form-label">Password</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                        <input type="password" class="form-control" id="password" name="password" 
+                                               placeholder="Enter your password" required>
+                                    </div>
+                                    <div id="passwordError" class="text-danger mt-1"></div>
+                                </div>
+                            </div>
+                            </div>
+                            <div>
+                            <div class="col-md-12">
+                                <div class="form-group mb-3">
+                                    <label for="confirm_password" class="form-label">Confirm Password</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" 
+                                               placeholder="Confirm your password" required>
+                                    </div>
+                                    <div id="confirmPasswordError" class="text-danger mt-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary-custom py-3">
+                            <i class="fas fa-user-plus me-2"></i>Sign Up
+                        </button>
+                    </form>
+                    
+                    <div class="divider">Already have an account?</div>
+                    
+                    <div class="text-center">
+                        <p>Sign in to your account <a href="{{ url_for('auth.login') }}" class="login-link">Login here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const signupForm = document.getElementById('signupForm');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirm_password');
+
+        const nameError = document.getElementById('nameError');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+        const confirmPasswordError = document.getElementById('confirmPasswordError');
+
+        // Function to validate name
+        function validateName() {
+            const name = nameInput.value.trim();
+            if (name === '') {
+                nameError.textContent = 'Name is required';
+                nameInput.classList.add('is-invalid');
+                return false;
+            }
+            nameError.textContent = '';
+            nameInput.classList.remove('is-invalid');
+            nameInput.classList.add('is-valid');
+            return true;
+        }
+
+        // Function to validate email
+        function validateEmail() {
+            const email = emailInput.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (email === '') {
+                emailError.textContent = 'Email is required';
+                emailInput.classList.add('is-invalid');
+                return false;
+            }
+            
+            if (!emailRegex.test(email)) {
+                emailError.textContent = 'Please enter a valid email address';
+                emailInput.classList.add('is-invalid');
+                return false;
+            }
+            
+            emailError.textContent = '';
+            emailInput.classList.remove('is-invalid');
+            emailInput.classList.add('is-valid');
+            return true;
+        }
+
+        // Function to validate password
+        function validatePassword() {
+            const password = passwordInput.value;
+            
+            if (password === '') {
+                passwordError.textContent = 'Password is required';
+                passwordInput.classList.add('is-invalid');
+                return false;
+            }
+            
+            if (password.length < 6) {
+                passwordError.textContent = 'Password must be at least 6 characters long';
+                passwordInput.classList.add('is-invalid');
+                return false;
+            }
+            
+            passwordError.textContent = '';
+            passwordInput.classList.remove('is-invalid');
+            passwordInput.classList.add('is-valid');
+            return true;
+        }
+
+        // Function to validate confirm password
+        function validateConfirmPassword() {
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+            
+            if (confirmPassword === '') {
+                confirmPasswordError.textContent = 'Please confirm your password';
+                confirmPasswordInput.classList.add('is-invalid');
+                return false;
+            }
+            
+            if (password !== confirmPassword) {
+                confirmPasswordError.textContent = 'Passwords do not match';
+                confirmPasswordInput.classList.add('is-invalid');
+                return false;
+            }
+            
+            confirmPasswordError.textContent = '';
+            confirmPasswordInput.classList.remove('is-invalid');
+            confirmPasswordInput.classList.add('is-valid');
+            return true;
+        }
+
+        // Real-time validation
+        nameInput.addEventListener('blur', validateName);
+        emailInput.addEventListener('blur', validateEmail);
+        passwordInput.addEventListener('blur', validatePassword);
+        confirmPasswordInput.addEventListener('blur', validateConfirmPassword);
+        
+        nameInput.addEventListener('input', validateName);
+        emailInput.addEventListener('input', validateEmail);
+        passwordInput.addEventListener('input', function() {
+            validatePassword();
+            // Also validate confirm password when password changes
+            if (confirmPasswordInput.value !== '') {
+                validateConfirmPassword();
+            }
+        });
+        confirmPasswordInput.addEventListener('input', validateConfirmPassword);
+
+        // Form submission validation
+        signupForm.addEventListener('submit', function(event) {
+            const isNameValid = validateName();
+            const isEmailValid = validateEmail();
+            const isPasswordValid = validatePassword();
+            const isConfirmPasswordValid = validateConfirmPassword();
+            
+            if (!isNameValid || !isEmailValid || !isPasswordValid || !isConfirmPasswordValid) {
+                event.preventDefault();
+                
+                // Show alert if validation fails
+                showAlert('Please fix the errors in the form before submitting.', 'danger');
+                
+                // Focus on the first invalid field
+                if (!isNameValid) {
+                    nameInput.focus();
+                } else if (!isEmailValid) {
+                    emailInput.focus();
+                } else if (!isPasswordValid) {
+                    passwordInput.focus();
+                } else {
+                    confirmPasswordInput.focus();
+                }
+            }
+        });
+
+        // Function to show alert messages
+        function showAlert(message, type) {
+            // Remove any existing alerts
+            const existingAlert = document.querySelector('.alert');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+            
+            // Create alert element
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.setAttribute('role', 'alert');
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            // Insert alert at the top of the form
+            signupForm.prepend(alertDiv);
+            
+            // Auto-dismiss after 5 seconds
+            setTimeout(() => {
+                const bsAlert = new bootstrap.Alert(alertDiv);
+                bsAlert.close();
+            }, 5000);
+        }
+
+        // Clear validation styles when input gains focus
+        nameInput.addEventListener('focus', function() {
+            this.classList.remove('is-invalid', 'is-valid');
+            nameError.textContent = '';
+        });
+        
+        emailInput.addEventListener('focus', function() {
+            this.classList.remove('is-invalid', 'is-valid');
+            emailError.textContent = '';
+        });
+        
+        passwordInput.addEventListener('focus', function() {
+            this.classList.remove('is-invalid', 'is-valid');
+            passwordError.textContent = '';
+        });
+        
+        confirmPasswordInput.addEventListener('focus', function() {
+            this.classList.remove('is-invalid', 'is-valid');
+            confirmPasswordError.textContent = '';
+        });
+
+        // Check if there are any pre-existing values and validate them after a short delay
+        setTimeout(() => {
+            if (nameInput.value) validateName();
+            if (emailInput.value) validateEmail();
+            if (passwordInput.value) validatePassword();
+            if (confirmPasswordInput.value) validateConfirmPassword();
+        }, 100);
+    });
+</script>
+{% endblock %}

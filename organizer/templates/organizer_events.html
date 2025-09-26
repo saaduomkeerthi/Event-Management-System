@@ -1,0 +1,93 @@
+{% extends "base_organizer.html" %}
+
+{% block organizer_content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">My Events</h1>
+    <a href="{{ url_for('organizer.create_event') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+        <i class="fas fa-plus fa-sm text-white-50"></i> Create New Event
+    </a>
+</div>
+
+{% if events %}
+<!-- Only show filters and table if there are events -->
+<!-- Filter and Search Section -->
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('organizer.all_events') }}" class="form-inline">
+            <div class="form-group mr-2">
+                <label for="status" class="mr-2 mb-2">Filter by:</label>
+                <select class="form-control" id="status" name="status" onchange="this.form.submit()">
+                    <option value="all" {% if status_filter == 'all' %}selected{% endif %}>All Events</option>
+                    <option value="upcoming" {% if status_filter == 'upcoming' %}selected{% endif %}>Upcoming Events</option>
+                    <option value="past" {% if status_filter == 'past' %}selected{% endif %}>Past Events</option>
+                </select>
+            </div>
+            <div class="form-group mr-2">
+                <input type="text" class="form-control mt-2" name="q" placeholder="Search events..." value="{{ search_query }}">
+            </div>
+            <button type="submit" class="btn btn-primary mt-2">Search</button>
+        </form>
+    </div>
+</div>
+
+<!-- Events Table -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Events List</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Event Name</th>
+                        <th>Date</th>
+                        <th>Location</th>
+                        <th>Participants</th>
+                        <!-- <th>Status</th> -->
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+    {% for event in events %}
+    <tr>
+        <td>{{ event.title }}</td>
+        <td>{{ event.event_date }} {{ event.event_time }}</td>
+        <td>{{ event.location }}</td>
+        <td>{{ event.participant_count }}/{{ event.total_tickets }}</td>
+        <td>
+            <a href="{{ url_for('organizer.view_event', event_id=event.event_id) }}" class="btn btn-sm btn-info">View</a>
+            <a href="{{ url_for('organizer.edit_event', event_id=event.event_id) }}" class="btn btn-sm btn-primary">Edit</a>
+            <form action="{{ url_for('organizer.delete_event', event_id=event.event_id) }}" method="POST" style="display:inline;">
+        <button type="submit" class="btn btn-sm btn-danger"
+                onclick="return confirm('Are you sure you want to delete this event?')">
+            Delete
+        </button>
+    </form>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<!-- Show empty state when no events exist -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">No Events Yet</h6>
+    </div>
+    <div class="card-body">
+        <div class="text-center py-5">
+            <i class="fas fa-calendar-plus fa-4x text-gray-300 mb-4"></i>
+            <h4 class="text-gray-800">You haven't created any events yet</h4>
+            <p class="text-gray-600 mb-4">Start by creating your first event to manage registrations and participants.</p>
+            <a href="{{ url_for('organizer.create_event') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-plus mr-2"></i> Create Your First Event
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

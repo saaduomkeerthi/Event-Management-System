@@ -1,0 +1,818 @@
+{% extends "base.html" %}
+{% block title %}Home - EMS{% endblock %}
+{% block extra_css %}
+<style>
+    /* Importing Google Fonts for a modern, clean look */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+    :root {
+       
+        --primary-color: #4e73df;
+            --secondary-color: #f8f9fc;
+            --accent-color: #36b9cc;
+            --dark-color: #5a5c69;
+        
+        --background-color: #f9f7fe;
+        --text-color: #333;
+        --light-text-color: #fff;
+        --card-background: #fff;
+        --border-radius: 12px;
+        --box-shadow-light: 0 4px 20px rgba(0, 0, 0, 0.08);
+        --box-shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.12);
+        --transition-speed: 0.3s;
+        --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        --gradient-5: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        --gradient-6: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+    }
+    /* Global Styles */
+    body {
+        font-family: 'Poppins', sans-serif;
+        color: var(--text-color);
+        background-color: var(--background-color);
+        overflow-x: hidden;
+    }
+    /* Hero Section */
+    .hero {
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+
+        url("{{ url_for('static', filename='images/m1.jpg') }}") center/cover no-repeat;
+        color: var(--light-text-color);
+        text-align: center;
+        padding: 100px 20px;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+    /* Animated Background Shapes */
+    .hero-shapes {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        overflow: hidden;
+    }
+    .shape {
+        position: absolute;
+        border-radius: 50%;
+        animation: float 15s infinite ease-in-out;
+    }
+    .shape-1 {
+        width: 80px;
+        height: 80px;
+        top: 20%;
+        left: 10%;
+        background: rgba(255, 255, 255, 0.15);
+        animation-delay: 0s;
+    }
+    .shape-2 {
+        width: 120px;
+        height: 120px;
+        top: 60%;
+        left: 80%;
+        background: rgba(255, 255, 255, 0.12);
+        animation-delay: 2s;
+    }
+    .shape-3 {
+        width: 60px;
+        height: 60px;
+        top: 80%;
+        left: 20%;
+        background: rgba(255, 255, 255, 0.18);
+        animation-delay: 4s;
+    }
+    @keyframes float {
+        0%,
+        100% {
+            transform: translateY(0) rotate(0deg);
+        }
+        50% {
+            transform: translateY(-20px) rotate(10deg);
+        }
+    }
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+    .hero h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        animation: fadeInDown 1s ease-out;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(90deg, #fff, #e0e7ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .hero p {
+        font-size: 1.2rem;
+        font-weight: 300;
+        margin-bottom: 40px;
+        animation: fadeInUp 1s ease-out 0.2s;
+        animation-fill-mode: forwards;
+        opacity: 0;
+        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+        color: #f0f4ff;
+    }
+    .hero .btn {
+        animation: fadeInUp 1s ease-out 0.4s;
+        animation-fill-mode: forwards;
+        opacity: 0;
+    }
+    /* Buttons */
+    .btn {
+        display: inline-block;
+        padding: 12px 30px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all var(--transition-speed) ease;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateX(-100%);
+        transition: transform var(--transition-speed) ease;
+        z-index: -1;
+    }
+    .btn:hover::before {
+        transform: translateX(0);
+    }
+    .btn-primary {
+        background: var(--primary-color);
+        color: var(--light-text-color);
+        box-shadow: 0 6px 15px rgba(17, 57, 203, 0.4);
+        margin-right: 15px;
+    }
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(17, 57, 203, 0.4);
+    }
+    .btn-outline {
+        background-color: transparent;
+        color: var(--light-text-color);
+        border: 2px solid var(--light-text-color);
+    }
+    .btn-outline:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+        background-color: transparent;
+        color: var(--light-text-color);
+    }
+    .hero-buttons {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-top: 20px;
+    }
+    /* Sections */
+    .section {
+        padding: 80px 0;
+        position: relative;
+    }
+    .section-title {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        background: var(--primary-color);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        position: relative;
+    }
+    .section-subtitle {
+        text-align: center;
+        font-size: 1.1rem;
+        color: #666;
+        max-width: 700px;
+        margin: 0 auto 60px;
+    }
+    .section-title::after {
+        content: '';
+        display: block;
+        width: 60px;
+        height: 4px;
+        background: var(--gradient-2);
+        margin: 10px auto 0;
+        border-radius: 2px;
+    }
+
+    /* Features Grid */
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 40px;
+        text-align: center;
+    }
+    .feature-item {
+        background: var(--card-background);
+        padding: 40px 20px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow-light);
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        position: relative;
+        overflow: hidden;
+        height: 100%;
+    }
+    .feature-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: var(--gradient-2);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease;
+    }
+    .feature-item:hover::before {
+        transform: scaleX(1);
+    }
+    .feature-item:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--box-shadow-medium);
+    }
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        transition: all 0.3s ease;
+    }
+    .feature-item:nth-child(1) .feature-icon {
+        background: var(--gradient-1);
+    }
+    .feature-item:nth-child(2) .feature-icon {
+        background: var(--gradient-3);
+    }
+    .feature-item:nth-child(3) .feature-icon {
+        background: var(--gradient-4);
+    }
+    .feature-item:hover .feature-icon {
+        transform: scale(1.1);
+        box-shadow: 0 10px 20px rgba(106, 17, 203, 0.3);
+    }
+    .feature-icon i {
+        font-size: 2rem;
+        color: white;
+    }
+    .feature-item h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: var(--dark-color);
+    }
+    .feature-item p {
+        color: #666;
+        line-height: 1.6;
+    }
+    /* MITRAz Introduction Section */
+    .mitraz-section {
+        padding: 80px 0;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+        color: #333;
+    }
+    .mitraz-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        background: var(--gradient-5);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .mitraz-description {
+        font-size: 1.05rem;
+        line-height: 1.7;
+        margin-bottom: 15px;
+        color: #555;
+    }
+    .mitraz-highlight {
+        background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        border-left: 4px solid #ff5722;
+        padding: 15px;
+        border-radius: 6px;
+        margin: 25px 0;
+        font-style: italic;
+        color: #333;
+    }
+    .feature-list {
+        list-style: none;
+        padding: 0;
+        margin: 20px 0;
+    }
+    .feature-list li {
+        padding-left: 28px;
+        margin-bottom: 10px;
+        position: relative;
+        font-size: 1rem;
+        color: #555;
+    }
+    .feature-list li::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: #ff5722;
+        font-weight: bold;
+    }
+    .media-content { position: relative; }
+    .media-card {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 20px;
+        display: inline-block;
+        max-width: 500px;
+        width: 100%;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+    }
+    .media-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    }
+    .media-card img {
+        width: 100%;
+        height: auto;
+        display: block;
+        transition: transform 0.5s ease;
+    }
+    .media-card:hover img {
+        transform: scale(1.05);
+    }
+    .media-overlay {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: linear-gradient(135deg, rgba(106, 17, 203, 0.8), rgba(37, 117, 252, 0.8));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        color: white;
+        font-size: 1rem;
+    }
+    .media-card:hover .media-overlay { opacity: 1; }
+    .video-wrapper {
+        display: flex;
+        justify-content: center;
+    }
+    .video-player {
+        width: 100%;
+        max-width: 500px;
+        border-radius: 8px;
+        height: 500px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
+    /* Community Section */
+    .community-section {
+        background: linear-gradient(135deg, #f9f9ff 0%, #f0f4ff 100%);
+    }
+    .community-section .feature-item:nth-child(1) .feature-icon {
+        background: var(--gradient-2);
+    }
+    .community-section .feature-item:nth-child(2) .feature-icon {
+        background: var(--gradient-4);
+    }
+    .community-section .feature-item:nth-child(3) .feature-icon {
+        background: var(--gradient-6);
+    }
+    /* Gallery Section */
+    .gallery-section {
+        padding: 80px 0;
+        background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%);
+    }
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+        margin-top: 40px;
+    }
+    .gallery-item {
+        position: relative;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        height: 250px;
+        box-shadow: var(--box-shadow-light);
+        transition: all 0.3s ease;
+    }
+    .gallery-item:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--box-shadow-medium);
+    }
+    .gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    .gallery-item:hover img {
+        transform: scale(1.1);
+    }
+    .gallery-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(106, 17, 203, 0.9), rgba(37, 117, 252, 0.7));
+        padding: 20px;
+        color: white;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+    }
+    .gallery-item:hover .gallery-overlay {
+        transform: translateY(0);
+    }
+    .gallery-overlay h4 {
+        margin-bottom: 5px;
+        font-size: 1.1rem;
+    }
+    .gallery-overlay p {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+    /* FAQ Section */
+    .faq-section {
+  padding: 60px 20px;
+  background: white;
+  color: black;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.section-subtitle {
+  font-size: 1rem;
+  margin-bottom: 30px;
+  color: #bbb;
+}
+
+.faq-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.faq-item {
+  background: white;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.faq-question {
+  padding: 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  background: white;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  text-align: left;
+}
+
+.faq-answer p {
+  padding: 0 20px 20px;
+  margin: 0;
+  color: black;
+}
+
+.faq-item.active .faq-answer {
+  max-height: 200px;
+}
+   @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    /* Media Queries for Responsiveness */
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 2.5rem;
+        }
+        .hero p {
+            font-size: 1rem;
+        }
+        .section-title {
+            font-size: 2rem;
+        }
+        .hero-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+        .btn {
+            margin: 5px 0;
+            width: 100%;
+            text-align: center;
+        }
+        .community-grid,
+        .events-grid,
+        .gallery-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+    <div class="hero-content">
+        <h1>Welcome to the Future of Event Management</h1>
+        <p>Seamlessly organize, manage, and experience unforgettable events with our all-in-one platform.</p>
+        <div class="hero-buttons">
+            <a href="#features-section" class="btn btn-primary scroll-to-section">Explore Features</a>
+            <a href="#community-section" class="btn btn-outline scroll-to-section">Join Our Community</a>
+        </div>
+    </div>
+</section>
+<!-- Features Section -->
+<section id="features-section" class="section">
+    <div class="container">
+        <h2 class="section-title reveal fade-bottom">Why Choose EMS?</h2>
+        <p class="section-subtitle reveal fade-bottom">Our comprehensive event management system provides all the tools
+            you need to create, manage, and execute successful events.</p>
+        <div class="features-grid">
+            <div class="feature-item reveal fade-bottom">
+                <div class="feature-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <h3>Intuitive Event Creation</h3>
+                <p>Effortlessly set up new events with customizable details, schedules, and ticketing options.</p>
+            </div>
+            <div class="feature-item reveal fade-bottom">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Volunteer Management</h3>
+                <p>Recruit, assign, and track volunteers with ease for every event. Manage roles and schedules
+                    efficiently.</p>
+            </div>
+            <div class="feature-item reveal fade-bottom">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Comprehensive Reporting</h3>
+                <p>Gain insights with detailed reports on attendance, budget, and more. Make data-driven decisions.</p>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- MITRAz Introduction Section -->
+<section id="mitraz-intro" class="mitraz-section">
+  <div class="container">
+    <div class="row align-items-center">
+      <!-- Left Column - Text Content -->
+      <div class="col-lg-6">
+        <div class="mitraz-content">
+          <h2 class="mitraz-title">Empowering Events, Connecting Communities</h2>
+          <p class="mitraz-description">
+            Welcome to the MITRAz Event Organizing Platform – your go-to destination for seamless event planning, 
+            management, and participation. Whether it's educational workshops, cultural tests, or career development 
+            programs, we provide a streamlined system for event registration, ticket booking, and real-time updates.
+          </p>
+          <p class="mitraz-description">
+            Join us in creating impactful events that bring learning, networking, and entertainment together!
+          </p>
+          <div class="mitraz-highlight">
+            <p>
+              As an NGO working at the grassroots level, we have identified and initiated several service activities 
+              to deal with acute community problems. Amongst these is Miravaani, our 24/7 free cellphone radio service 
+              that provides credible information to digitally challenged communities.
+            </p>
+          </div>
+          <ul class="feature-list">
+            <li>Seamless event registration and hassle-free participation.</li>
+            <li>Real-time updates and notifications to keep attendees informed.</li>
+            <li>Comprehensive event analytics and engagement tracking for better planning.</li>
+          </ul>
+        </div>
+      </div>
+      <!-- Right Column - Media Content -->
+      <div class="col-lg-6">
+        <div class="media-content text-center">
+          <!-- Image Card -->
+          <div class="media-card mb-4">
+            <a href="{{ url_for('static', filename='images/mitraz-about.jpg') }}" 
+               data-lightbox="mitraz-gallery" data-title="MITRAz Team">
+              <img src="{{ url_for('static', filename='images/mitraz-about.jpg') }}" 
+                   alt="MITRAz Team" class="img-fluid rounded shadow">
+              <div class="media-overlay">
+                <i class="fas fa-expand"></i>
+                <p>View Image</p>
+              </div>
+            </a>
+          </div>
+          <!-- Video Player -->
+          <div class="video-wrapper">
+            <video class="video-player shadow-lg rounded"
+                   controls
+                   preload="metadata"
+                   poster="{{ url_for('static', filename='images/mitraz-video-thumb.jpg') }}">
+              <source src="{{ url_for('static', filename='videos/mitraz-video.mp4') }}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Community Section -->
+<section id="community-section" class="community-section">
+    <div class="container">
+        <h2 class="section-title reveal fade-bottom">Join Our Community</h2>
+        <p class="section-subtitle reveal fade-bottom">Be part of our growing community and contribute to amazing events
+        </p>
+        <div class="features-grid">
+            <div class="feature-item reveal fade-bottom">
+                <div class="feature-icon">
+                    <i class="fas fa-microphone"></i>
+                </div>
+                <h3>Organizers</h3>
+                <p>Create and manage events with our powerful tools. Reach the right audience and make your events
+                    successful.</p>
+                <a href="{{ url_for('auth.organizer_signup') }}" class="btn btn-primary">Become an Organizer</a>
+            </div>
+            <div class="feature-item reveal fade-bottom">
+                <div class="feature-icon">
+                    <i class="fas fa-hands-helping"></i>
+                </div>
+                <h3>Volunteers</h3>
+                <p>Join events as a volunteer, gain experience, and contribute to meaningful causes while building your
+                    network.</p>
+                <a href="{{ url_for('auth.volunteer_signup') }}" class="btn btn-primary">Become a Volunteer</a>
+            </div>
+            <div class="feature-item reveal fade-bottom">
+                <div class="feature-icon">
+                    <i class="fas fa-ticket-alt"></i>
+                </div>
+                <h3>Participants</h3>
+                <p>Discover and attend exciting events in your area. Learn new skills, network, and have unforgettable
+                    and memorable experiences.</p>
+                <a href="{{ url_for('auth.participant_signup') }}" class="btn btn-primary">Join as Participant</a>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Gallery Section -->
+<section class="gallery-section">
+    <div class="container">
+        <h2 class="section-title reveal fade-bottom">Event Gallery</h2>
+        <p class="section-subtitle reveal fade-bottom">Take a look at some of our most memorable events</p>
+        <div class="gallery-grid">
+            <div class="gallery-item reveal fade-bottom">
+                <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                    alt="Conference">
+                <div class="gallery-overlay">
+                    <h4>Govt. School Empowerment 2025</h4>
+                    <p>Over 200 students joined our school summercamp event</p>
+                </div>
+            </div>
+            <div class="gallery-item reveal fade-bottom">
+                <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                    alt="Networking">
+                <div class="gallery-overlay">
+                    <h4>Photography event 2025</h4>
+                    <p>Conducted a photography event for the interested students</p>
+                </div>
+            </div>
+            <div class="gallery-item reveal fade-bottom">
+                <img src="https://images.unsplash.com/photo-1552581234-26160f608093?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                    alt="Workshop">
+                <div class="gallery-overlay">
+                    <h4>Creative Workshop</h4>
+                    <p>Participants learning new skills in our hands-on workshop</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- FAQ Section -->
+<section class="faq-section">
+  <div class="container">
+    <h2 class="section-title">Frequently Asked Questions</h2>
+    <p class="section-subtitle">Find answers to common questions about our event management system</p>
+
+    <div class="faq-container">
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>How do I create a new event?</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          <p>After logging in, navigate to the 'Events' section and click on the 'Create New Event' button.
+             You'll be guided through a simple form to add all the necessary details.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>Can I manage multiple volunteers for a single event?</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          <p>Absolutely! Our system allows you to add and assign an unlimited number of volunteers to any event,
+             complete with specific roles and schedules.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span>Is EMS suitable for large-scale events?</span>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          <p>Yes, EMS is built to scale. Whether you're planning a small gathering or a large conference, 
+             our robust infrastructure ensures smooth management.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+{% block extra_js %}
+<!-- Lightbox and Video Modal Dependencies -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+<script>
+    // Initialize lightbox
+    lightbox.option({
+        'resizeDuration': 200,
+        'wrapAround': true,
+        'albumLabel': "Image %1 of %2"
+    });
+    
+    // FAQ toggle functionality - Enhanced
+document.addEventListener('DOMContentLoaded', function () {
+  const questions = document.querySelectorAll('.faq-question');
+
+  questions.forEach(q => {
+    q.addEventListener('click', () => {
+      const item = q.parentElement;
+
+      // Close all other items
+      document.querySelectorAll('.faq-item').forEach(i => {
+        if (i !== item) i.classList.remove('active');
+      });
+
+      // Toggle clicked item
+      item.classList.toggle('active');
+    });
+  });
+});
+
+</script>
+{% endblock %}

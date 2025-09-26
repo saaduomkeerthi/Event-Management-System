@@ -1,0 +1,118 @@
+{% extends "base_organizer.html" %}
+
+{% block organizer_content %}
+<div class="container py-4">
+
+    <!-- Profile Header -->
+    <div class="card shadow-lg border-0 mb-4">
+        <div class="card-body d-flex align-items-center p-4">
+            <div class="me-4">
+                {% if user.profile_picture %}
+                    <img src="{{ user.profile_picture }}" 
+                         class="rounded-circle shadow" 
+                         style="width:120px; height:120px; object-fit:cover;">
+                {% else %}
+                    <img src="/static/img/undraw_profile.svg" 
+                         class="rounded-circle shadow" 
+                         style="width:120px; height:120px; object-fit:cover;">
+                {% endif %}
+            </div>
+            <div>
+                <h3 class="fw-bold text-dark mb-1">{{ user.name }}</h3>
+                <p class="text-muted mb-2">{{ user.email }}</p>
+                <span class="badge bg-primary text-white px-3 py-2">
+                    <i class="fas fa-user-tie me-1"></i> Organizer
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Left Column: Profile Form -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h6 class="m-0 fw-bold">Edit Profile</h6>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('organizer.profile') }}" enctype="multipart/form-data">
+
+                        <!-- Profile Picture Upload -->
+                        <div class="form-group mb-4 text-center">
+                            <label for="profile_picture" class="form-label fw-semibold">Update Profile Picture</label>
+                            <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*">
+                        </div>
+
+                        <!-- Name & Email -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label fw-semibold">Full Name</label>
+                                <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label fw-semibold">Email Address</label>
+                                <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                            </div>
+                        </div>
+
+                        <!-- Phone & Organization -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label fw-semibold">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" value="{{ user.phone or '' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="organization" class="form-label fw-semibold">Organization</label>
+                                <input type="text" class="form-control" id="organization" name="organization" value="{{ user.organization or '' }}">
+                            </div>
+                        </div>
+
+                        <!-- Bio -->
+                        <div class="mb-3">
+                            <label for="bio" class="form-label fw-semibold">Bio</label>
+                            <textarea class="form-control" id="bio" name="bio" rows="4">{{ user.bio or '' }}</textarea>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="fas fa-save me-1"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Account Info -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-secondary text-white py-3">
+                    <h6 class="m-0 fw-bold">Account Information</h6>
+                </div>
+                <div class="card-body">
+                    <p><strong>User Role:</strong> Organizer</p>
+                    <p><strong>Account Created:</strong> {{ user.created_at.strftime('%Y-%m-%d') }}</p>
+                    <p><strong>Total Events Created:</strong> {{ stats.total_events if stats else 0 }}</p>
+                    <hr>
+                    <div class="d-grid">
+                        <a href="{{ url_for('organizer.change_password') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-key me-1"></i> Change Password
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Show file name when selected
+    document.querySelector(".custom-file-input")?.addEventListener("change", function () {
+        const fileName = this.value.split("\\").pop();
+        this.nextElementSibling.innerText = fileName;
+    });
+</script>
+{% endblock %}

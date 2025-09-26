@@ -1,0 +1,140 @@
+{% extends "base_volunteer.html" %}
+
+{% block title %}My Tasks - Volunteer Dashboard{% endblock %}
+
+{% block content %}
+<style>
+    .card {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    .card-header {
+        font-weight: 600;
+        background-color: #f4f6f9;
+        border-bottom: none;
+        border-radius: 12px 12px 0 0;
+        color: #333;
+    }
+    .btn-success {
+        background-color: #388e3c;
+        border: none;
+        transition: background-color 0.3s ease;
+    }
+    .btn-success:hover {
+        background-color: #2e7d32;
+    }
+    .table {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .table thead {
+        background-color: #f0f4f7;
+    }
+    .table tbody tr:nth-child(even) {
+        background-color: #fafafa;
+    }
+    .empty-state {
+        color: #6c757d;
+    }
+    .empty-state i {
+        color: #adb5bd;
+    }
+</style>
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4 fw-bold" style="color: #00894b;">My Tasks</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{{ url_for('volunteer.dashboard') }}">Dashboard</a></li>
+        <li class="breadcrumb-item active">My Tasks</li>
+    </ol>
+
+    <!-- Assigned Tasks -->
+    <div class="card mb-5">
+        <div class="card-header">
+            <i class="fas fa-tasks me-2"></i>
+            Assigned Tasks ({{ assigned_tasks|length }})
+        </div>
+        <div class="card-body">
+            {% if assigned_tasks %}
+            <div class="row">
+                {% for task in assigned_tasks %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        {% if task.event_image %}
+                        <img src="{{ task.event_image }}" class="card-img-top" alt="{{ task.event_title }}" style="height: 200px; object-fit: cover; border-radius: 12px 12px 0 0;">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">{{ task.event_title }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                <i class="fas fa-calendar-alt me-1 text-success"></i> {{ task.event_date.strftime('%B %d, %Y') }}
+                                <span class="ms-2"><i class="fas fa-clock me-1 text-success"></i>{{ task.event_time }}</span>
+                            </h6>
+                            <p class="card-text mt-2">{{ task.task_description }}</p>
+                            <p class="card-text"><small class="text-muted"><i class="fas fa-map-marker-alt me-1"></i> {{ task.location }}</small></p>
+                        </div>
+                        <div class="card-footer bg-white border-0">
+                            <form action="{{ url_for('volunteer.complete_task', task_id=task.task_id) }}" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-success btn-sm px-3">
+                                    <i class="fas fa-check me-1"></i> Mark Complete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-5 empty-state">
+                <i class="fas fa-check-circle fa-3x mb-3"></i>
+                <p>No assigned tasks at the moment.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Completed Tasks -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-check-circle me-2"></i>
+            Completed Tasks ({{ completed_tasks|length }})
+        </div>
+        <div class="card-body">
+            {% if completed_tasks %}
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle">
+                    <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>Task Description</th>
+                            <th>Hours Contributed</th>
+                            <th>Completed On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in completed_tasks %}
+                        <tr>
+                            <td class="fw-semibold">{{ task.event_title }}</td>
+                            <td>{{ task.task_description }}</td>
+                            <td><span class="badge bg-success">{{ task.hours_contributed }}</span></td>
+                            <td>{{ task.updated_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5 empty-state">
+                <i class="fas fa-clipboard-list fa-3x mb-3"></i>
+                <p>No completed tasks yet.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizer Dashboard - Event Management System</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #f8f9fc;
+            --accent-color: #36b9cc;
+            --dark-color: #5a5c69;
+        }
+        
+        body {
+            background-color: #f8f9fc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        #wrapper {
+            display: flex;
+            flex: 1 0 auto;
+        }
+        
+        /* Sidebar */
+        #sidebar {
+            width: 250px;
+            min-height: 100vh;
+            background: linear-gradient(180deg, var(--primary-color) 10%, #224abe 100%);
+            color: white;
+            transition: all 0.3s;
+            position: fixed;
+            z-index: 1000;
+        }
+        
+        .sidebar-collapsed #sidebar {
+            width: 80px;
+            text-align: center;
+        }
+        
+        .sidebar-collapsed .sidebar-brand span {
+            display: none;
+        }
+        
+        .sidebar-collapsed .sidebar-nav .nav-link span {
+            display: none;
+        }
+        
+        .sidebar-collapsed .sidebar-nav .nav-link i {
+            margin-right: 0;
+            font-size: 1.2rem;
+        }
+        
+        .sidebar-collapsed #content-wrapper {
+            margin-left: 80px;
+            width: calc(100% - 80px);
+        }
+        
+        .sidebar-brand {
+    height: 70px;
+    padding: 1.5rem 1rem;
+    font-size: 1.2rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: left; /* align content to the left */
+    display: flex;
+    align-items: center; /* vertically center icon and text */
+    gap: 0.5rem; /* space between icon and text */
+}
+
+        
+        .sidebar-nav {
+            padding: 0;
+            list-style: none;
+        }
+        
+        .sidebar-nav .nav-item {
+            margin-bottom: 0.2rem;
+        }
+        
+        .sidebar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 1rem;
+            font-weight: 500;
+            display: block;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-nav .nav-link:hover,
+        .sidebar-nav .nav-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-nav .nav-link i {
+            margin-right: 0.5rem;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Topbar */
+        #topbar {
+            height: 70px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+        
+        /* Main Content */
+        #content-wrapper {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        #content {
+            padding: 20px;
+            flex: 1 0 auto;
+        }
+        
+        /* Dashboard Cards */
+        .dashboard-card {
+            border-radius: 8px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            margin-bottom: 1.5rem;
+            border: none;
+        }
+        
+        .card-border-left-primary {
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .card-border-left-success {
+            border-left: 4px solid #1cc88a;
+        }
+        
+        .card-border-left-info {
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .card-border-left-warning {
+            border-left: 4px solid #f6c23e;
+        }
+        
+        /* Table Styles */
+        .table th {
+            border-top: none;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        /* Profile dropdown */
+        .profile-img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        
+        /* Notification badge */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            padding: 3px 7px;
+            border-radius: 50%;
+            background: #e74a3b;
+            color: white;
+            font-size: 0.7rem;
+        }
+        
+        /* Activity timeline */
+        .activity-item {
+            position: relative;
+            padding-bottom: 1.5rem;
+            border-left: 1px solid #e3e6f0;
+            padding-left: 1.5rem;
+        }
+        
+        .activity-item:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -6px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4e73df;
+        }
+        
+        .activity-item:last-child {
+            border-left: 1px solid transparent;
+        }
+        
+        /* Notification styles */
+        .notification-item {
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .notification-item.unread {
+            border-left-color: var(--primary-color);
+            background-color: rgba(78, 115, 223, 0.05);
+        }
+        
+        .notification-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .notification-volunteer {
+            border-left-color: #1cc88a;
+        }
+        
+        .notification-urgent {
+            border-left-color: #e74a3b;
+        }
+        
+        /* Footer Styles - Fixed positioning issue */
+        footer {
+            background: #343a40 !important;
+            color: white !important;
+            box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.1);
+            margin-top: auto;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+            width: calc(100% - 250px);
+            margin-left: 250px;
+            transition: all 0.3s;
+        }
+        
+        footer h5 {
+            color: white !important;
+            font-weight: 600;
+        }
+        
+        footer a {
+            color: rgba(255, 255, 255, 0.8) !important;
+            transition: all 0.3s;
+        }
+        
+        footer a:hover {
+            color: white !important;
+            text-decoration: none;
+        }
+        
+        footer .text-muted {
+            color: rgba(255, 255, 255, 0.6) !important;
+        }
+        
+        footer hr {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Fix for sidebar collapsed state */
+        .sidebar-collapsed footer {
+            width: calc(100% - 80px);
+            margin-left: 80px;
+        }
+    </style>
+</head>
+<body>
+    <div id="organizer-dashboard">
+        <div id="wrapper">
+            <!-- Sidebar -->
+            <div id="sidebar">
+                <div class="sidebar-brand">
+                    <i class="fas fa-calendar-alt me-2"></i>
+                    <span>EMS</span>
+                </div>
+                
+                <ul class="sidebar-nav">
+                    <li class="nav-item">
+                        <a href="{{ url_for('organizer.dashboard') }}" class="nav-link {% if request.endpoint == 'organizer.dashboard' %}active{% endif %}">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('organizer.all_events') }}" class="nav-link {% if request.endpoint == 'organizer.all_events' %}active{% endif %}">
+                            <i class="fas fa-calendar"></i>
+                            <span>All Events</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('organizer.create_event') }}" class="nav-link {% if request.endpoint == 'organizer.create_event' %}active{% endif %}">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Create Event</span>
+                        </a>
+                    </li>
+                   <li class="nav-item">
+  <a href="#" 
+     class="nav-link {% if request.endpoint == 'organizer.events' %}active{% endif %}">
+    <i class="fas fa-user-check"></i>
+    <span>Attendance</span>
+  </a>
+</li>
+
+                    <li class="nav-item">
+                        <a href="{{ url_for('organizer.notifications_page') }}" class="nav-link {% if request.endpoint == 'organizer.notifications_page' %}active{% endif %}">
+                            <i class="fas fa-bell"></i>
+                            <span>Notifications</span>
+                        </a>
+                    </li>
+                    <li class="nav-item mt-4">
+                        <a href="{{ url_for('auth.logout') }}" class="nav-link">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Content Wrapper -->
+            <div id="content-wrapper">
+                <!-- Topbar -->
+                <nav id="topbar" class="navbar navbar-expand">
+                    <div class="container-fluid">
+                        <button id="sidebar-toggle" class="btn btn-link">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <ul class="navbar-nav ms-auto">
+                            <!-- <li class="nav-item dropdown me-3">
+                                <a class="nav-link position-relative" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-bell fa-fw"></i> -->
+                                    <!-- Notification badge -->
+                                    <!-- <span class="notification-badge">0</span>
+                                </a> -->
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg shadow" aria-labelledby="notificationsDropdown" style="width: 350px;">
+                                    <li class="dropdown-header d-flex justify-content-between align-items-center">
+                                        <span>Notifications</span>
+                                        <button class="btn btn-sm btn-link p-0 mark-all-read">Mark all as read</button>
+                                    </li>
+                                    <div id="notification-container" style="max-height: 300px; overflow-y: auto;">
+                                        <!-- Notifications will be dynamically inserted here -->
+                                    </div>
+                                    <li><a class="dropdown-item text-center small text-gray-500" href="{{ url_for('organizer.notifications_page') }}">Show All Notifications</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="d-none d-lg-inline text-gray-600 small me-2">
+                                        {% if session.get('name') %}
+        {{ session['name'] }}
+    {% else %}
+        Guest
+    {% endif %}
+                                    </span>
+                                    {% if user and user.profile_picture %}
+    <img class="profile-img" src="{{ user.profile_picture }}">
+{% else %}
+    <img class="profile-img" src="https://via.placeholder.com/40">
+{% endif %}
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" href="{{ url_for('organizer.profile') }}">
+                                        <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                                        Profile
+                                    </a></li>
+                                    <!-- <li><a class="dropdown-item" href="#">
+                                        <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                                        Settings
+                                    </a></li> -->
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                        Logout
+                                    </a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+
+                <!-- Main Content -->
+                <div id="content" class="container-fluid">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    {% block organizer_content %}
+                    <!-- Sample dashboard content to see the footer in context -->
+                    <div class="row">
+                        <div class="col-12">
+                            <h1 class="h3 mb-4 text-gray-800">Organizer Dashboard</h1>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card dashboard-card card-border-left-primary h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Events</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card dashboard-card card-border-left-success h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Upcoming Events</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">5</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-calendar-check fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card dashboard-card card-border-left-info h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Volunteers</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">42</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card dashboard-card card-border-left-warning h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Pending Requests</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800">8</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+                
+        <!-- Professional Footer -->
+        <footer class="bg-dark text-light pt-5 pb-3">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <h5 class="text-uppercase mb-4"><i class="fas fa-calendar-alt me-2"></i>Event Management System</h5>
+                        <p>Streamlining event planning and management for organizations of all sizes. Create, manage, and promote events with ease.</p>
+                        <div class="d-flex mt-3">
+                            <a href="#" class="text-light me-3"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="text-light me-3"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="text-light me-3"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#" class="text-light"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-6 mb-4">
+                        <h5 class="text-uppercase mb-4">Quick Links</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><a href="{{ url_for('index') }}" class="text-light text-decoration-none">Home</a></li>
+                            <li class="mb-2"><a href="{{ url_for('auth.login') }}" class="text-light text-decoration-none">Login</a></li>
+                            <li class="mb-2"><a href="{{ url_for('auth.signup') }}" class="text-light text-decoration-none">Sign Up</a></li>
+                            <li class="mb-2"><a href="{{ url_for('contact') }}" class="text-light text-decoration-none">Contact Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <h5 class="text-uppercase mb-4">Our Services</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><a href="#" class="text-light text-decoration-none">Event Creation</a></li>
+                            <li class="mb-2"><a href="#" class="text-light text-decoration-none">Ticket Management</a></li>
+                            <li class="mb-2"><a href="#" class="text-light text-decoration-none">Attendee Tracking</a></li>
+                            <li class="mb-2"><a href="#" class="text-light text-decoration-none">Event Promotion</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-4">
+                        <h5 class="text-uppercase mb-4">Contact Info</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> 123 Event Street, City</li>
+                            <li class="mb-2"><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+                            <li class="mb-2"><i class="fas fa-envelope me-2"></i> info@ems-example.com</li>
+                        </ul>
+                    </div>
+                </div>
+                <hr class="my-4">
+                <div class="row align-items-center">
+                    <div class="col-md-6 text-center text-md-start">
+                        <span>&copy; 2023 Event Management System. All rights reserved.</span>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <a href="#" class="text-decoration-none text-light me-3">Privacy Policy</a>
+                        <a href="#" class="text-decoration-none text-light me-3">Terms of Service</a>
+                        <a href="#" class="text-decoration-none text-light">Support</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    
+    <script>
+        // Sidebar toggle functionality
+        document.getElementById('sidebar-toggle').addEventListener('click', function() {
+            document.body.classList.toggle('sidebar-collapsed');
+        });
+    </script>
+</body>
+</html>

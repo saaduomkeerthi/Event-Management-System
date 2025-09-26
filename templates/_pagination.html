@@ -1,0 +1,58 @@
+{% macro render_pagination(endpoint, page, total_pages, extra_params={}) %}
+{% if total_pages > 1 %}
+<nav aria-label="Pagination">
+  <ul class="pagination justify-content-center my-3">
+
+    <!-- Previous -->
+    {% if page > 1 %}
+    <li class="page-item">
+      <a class="page-link"
+         href="{{ url_for(endpoint, **extra_params, page=page-1) }}">Previous</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled"><span class="page-link">Previous</span></li>
+    {% endif %}
+
+    <!-- First page -->
+    {% if page > 3 %}
+    <li class="page-item">
+      <a class="page-link" href="{{ url_for(endpoint, **extra_params, page=1) }}">1</a>
+    </li>
+    {% if page > 4 %}
+    <li class="page-item disabled"><span class="page-link">…</span></li>
+    {% endif %}
+    {% endif %}
+
+    <!-- Page window (2 before & 2 after current) -->
+    {% for p in range(page-2, page+3) %}
+      {% if p > 0 and p <= total_pages %}
+      <li class="page-item {% if p == page %}active{% endif %}">
+        <a class="page-link" href="{{ url_for(endpoint, **extra_params, page=p) }}">{{ p }}</a>
+      </li>
+      {% endif %}
+    {% endfor %}
+
+    <!-- Last page -->
+    {% if page < total_pages-2 %}
+      {% if page < total_pages-3 %}
+      <li class="page-item disabled"><span class="page-link">…</span></li>
+      {% endif %}
+      <li class="page-item">
+        <a class="page-link" href="{{ url_for(endpoint, **extra_params, page=total_pages) }}">{{ total_pages }}</a>
+      </li>
+    {% endif %}
+
+    <!-- Next -->
+    {% if page < total_pages %}
+    <li class="page-item">
+      <a class="page-link"
+         href="{{ url_for(endpoint, **extra_params, page=page+1) }}">Next</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled"><span class="page-link">Next</span></li>
+    {% endif %}
+
+  </ul>
+</nav>
+{% endif %}
+{% endmacro %}

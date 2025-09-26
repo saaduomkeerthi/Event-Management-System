@@ -1,0 +1,518 @@
+{% extends "base.html" %}
+{% block title %}Organizer Signup - EMS{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-color: #4e73df;
+        --primary-hover: #3a56c4;
+        --light-bg: #f8f9fa;
+        --border-color: #dee2e6;
+    }
+    
+    .registration-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    
+    .card {
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+    
+    .card-header {
+        padding: 1.5rem;
+        text-align: center;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        background: var(--primary-color);
+    }
+    
+    .card-body {
+        padding: 2rem;
+    }
+    
+    .form-control {
+        border-radius: 8px;
+        padding: 12px 16px;
+        border: 1px solid var(--border-color);
+        transition: all 0.3s;
+    }
+    
+    .form-control:focus {
+        box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.2);
+        border-color: var(--primary-color);
+    }
+    
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: #444;
+    }
+    
+    .btn-primary-custom {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 12px;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: all 0.3s;
+    }
+    
+    .btn-primary-custom:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+        color: white;
+    }
+    
+    .form-check-input:checked {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    
+    .divider {
+        display: flex;
+        align-items: center;
+        margin: 1.5rem 0;
+        color: #6c757d;
+    }
+    
+    .divider::before, .divider::after {
+        content: "";
+        flex: 1;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .divider::before {
+        margin-right: .5em;
+    }
+    
+    .divider::after {
+        margin-left: .5em;
+    }
+    
+    .login-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+    }
+    
+    .login-link:hover {
+        text-decoration: underline;
+    }
+    
+    .input-group-text {
+        background-color: #f8f9fa;
+        border-radius: 8px 0 0 8px;
+    }
+    
+    .custom-file-label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        border-radius: 0 8px 8px 0;
+    }
+    
+    .custom-file-input:focus ~ .custom-file-label {
+        box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.2);
+        border-color: var(--primary-color);
+    }
+    
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 15px;
+        padding-bottom: 5px;
+        border-bottom: 2px solid var(--primary-color);
+        display: inline-block;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container registration-container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header text-white">
+                    <h4 class="mb-0"><i class="fas fa-user-plus me-2"></i>Become an Organizer</h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted text-center mb-4">Fill out the form below to request organizer privileges. Your request will be reviewed by an administrator.</p>
+                    
+                    <form id="organizerSignupForm" method="POST" action="{{ url_for('auth.organizer_signup') }}" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="name" class="form-label">Full Name *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        <input type="text" class="form-control" id="name" name="name" required>
+                                    </div>
+                                    <div id="nameError" class="text-danger mt-1"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="email" class="form-label">Email Address *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                        <input type="email" class="form-control" id="email" name="email" required>
+                                    </div>
+                                    <div id="emailError" class="text-danger mt-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="password" class="form-label">Password *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                        <input type="password" class="form-control" id="password" name="password" required>
+                                    </div>
+                                    <div id="passwordError" class="text-danger mt-1"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="confirm_password" class="form-label">Confirm Password *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                                    </div>
+                                    <div id="confirmPasswordError" class="text-danger mt-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="organization" class="form-label">Organization Name *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-building"></i></span>
+                                        <input type="text" class="form-control" id="organization" name="organization" required>
+                                    </div>
+                                    <div id="organizationError" class="text-danger mt-1"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="phone" class="form-label">Phone Number *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                        <input type="tel" class="form-control" id="phone" name="phone" required>
+                                    </div>
+                                    <div id="phoneError" class="text-danger mt-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group mb-4">
+                            <label for="photo" class="form-label">Upload Your Photo *</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-camera"></i></span>
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="photo" name="photo" accept="image/*" required>
+                                    <label class="custom-file-label" for="photo">Choose file...</label>
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">Please upload a clear headshot photo.</small>
+                            <div id="photoError" class="text-danger mt-1"></div>
+                        </div>
+                        
+                        <div class="form-group mb-4">
+                            <label for="reason" class="form-label">Why do you want to become an organizer? *</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-edit"></i></span>
+                                <textarea class="form-control" id="reason" name="reason" rows="4" required></textarea>
+                            </div>
+                            <div id="reasonError" class="text-danger mt-1"></div>
+                        </div>
+                        
+                        <div class="form-group mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms" name="terms" required>
+                                <label class="form-check-label" for="terms">
+                                    I agree to the <a href="#" class="login-link">Terms and Conditions</a> and <a href="#" class="login-link">Privacy Policy</a>
+                                </label>
+                            </div>
+                            <div id="termsError" class="text-danger mt-1"></div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary-custom btn-block w-100 py-3">
+                            <i class="fas fa-paper-plane me-2"></i>Submit Request
+                        </button>
+                    </form>
+                    
+                    <div class="divider">Already have an account?</div>
+                    
+                    <div class="text-center">
+                        <p>Sign in to your account <a href="{{ url_for('auth.login') }}" class="login-link">Login here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('organizerSignupForm');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirm_password');
+        const organizationInput = document.getElementById('organization');
+        const phoneInput = document.getElementById('phone');
+        const photoInput = document.getElementById('photo');
+        const reasonInput = document.getElementById('reason');
+        const termsInput = document.getElementById('terms');
+        
+        const nameError = document.getElementById('nameError');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+        const confirmPasswordError = document.getElementById('confirmPasswordError');
+        const organizationError = document.getElementById('organizationError');
+        const phoneError = document.getElementById('phoneError');
+        const photoError = document.getElementById('photoError');
+        const reasonError = document.getElementById('reasonError');
+        const termsError = document.getElementById('termsError');
+        
+        // Show filename when file is selected
+        photoInput.addEventListener('change', function(e) {
+            var fileName = e.target.files[0].name;
+            var nextSibling = e.target.nextElementSibling;
+            nextSibling.innerText = fileName;
+            photoError.textContent = '';
+            photoInput.classList.remove('is-invalid');
+        });
+        
+        // Validation functions
+        function validateName() {
+            if (nameInput.value.trim() === '') {
+                nameError.textContent = 'Full name is required';
+                nameInput.classList.add('is-invalid');
+                return false;
+            }
+            nameError.textContent = '';
+            nameInput.classList.remove('is-invalid');
+            nameInput.classList.add('is-valid');
+            return true;
+        }
+        
+        function validateEmail() {
+            const email = emailInput.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (email === '') {
+                emailError.textContent = 'Email is required';
+                emailInput.classList.add('is-invalid');
+                return false;
+            }
+            
+            if (!emailRegex.test(email)) {
+                emailError.textContent = 'Please enter a valid email address';
+                emailInput.classList.add('is-invalid');
+                return false;
+            }
+            
+            emailError.textContent = '';
+            emailInput.classList.remove('is-invalid');
+            emailInput.classList.add('is-valid');
+            return true;
+        }
+        
+        function validatePassword() {
+            const password = passwordInput.value;
+            
+            if (password === '') {
+                passwordError.textContent = 'Password is required';
+                passwordInput.classList.add('is-invalid');
+                return false;
+            }
+            
+            if (password.length < 6) {
+                passwordError.textContent = 'Password must be at least 6 characters long';
+                passwordInput.classList.add('is-invalid');
+                return false;
+            }
+            
+            passwordError.textContent = '';
+            passwordInput.classList.remove('is-invalid');
+            passwordInput.classList.add('is-valid');
+            return true;
+        }
+        
+        function validateConfirmPassword() {
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+            
+            if (confirmPassword === '') {
+                confirmPasswordError.textContent = 'Please confirm your password';
+                confirmPasswordInput.classList.add('is-invalid');
+                return false;
+            }
+            
+            if (password !== confirmPassword) {
+                confirmPasswordError.textContent = 'Passwords do not match';
+                confirmPasswordInput.classList.add('is-invalid');
+                return false;
+            }
+            
+            confirmPasswordError.textContent = '';
+            confirmPasswordInput.classList.remove('is-invalid');
+            confirmPasswordInput.classList.add('is-valid');
+            return true;
+        }
+        
+        function validateOrganization() {
+            if (organizationInput.value.trim() === '') {
+                organizationError.textContent = 'Organization name is required';
+                organizationInput.classList.add('is-invalid');
+                return false;
+            }
+            organizationError.textContent = '';
+            organizationInput.classList.remove('is-invalid');
+            organizationInput.classList.add('is-valid');
+            return true;
+        }
+        
+        function validatePhone() {
+            if (phoneInput.value.trim() === '') {
+                phoneError.textContent = 'Phone number is required';
+                phoneInput.classList.add('is-invalid');
+                return false;
+            }
+            phoneError.textContent = '';
+            phoneInput.classList.remove('is-invalid');
+            phoneInput.classList.add('is-valid');
+            return true;
+        }
+        
+        function validatePhoto() {
+            if (photoInput.value === '') {
+                photoError.textContent = 'Photo is required';
+                return false;
+            }
+            photoError.textContent = '';
+            return true;
+        }
+        
+        function validateReason() {
+            if (reasonInput.value.trim() === '') {
+                reasonError.textContent = 'Please provide a reason';
+                reasonInput.classList.add('is-invalid');
+                return false;
+            }
+            reasonError.textContent = '';
+            reasonInput.classList.remove('is-invalid');
+            reasonInput.classList.add('is-valid');
+            return true;
+        }
+        
+        function validateTerms() {
+            if (!termsInput.checked) {
+                termsError.textContent = 'You must agree to the terms and conditions';
+                return false;
+            }
+            termsError.textContent = '';
+            return true;
+        }
+        
+        // Real-time validation
+        nameInput.addEventListener('blur', validateName);
+        emailInput.addEventListener('blur', validateEmail);
+        passwordInput.addEventListener('blur', validatePassword);
+        confirmPasswordInput.addEventListener('blur', validateConfirmPassword);
+        organizationInput.addEventListener('blur', validateOrganization);
+        phoneInput.addEventListener('blur', validatePhone);
+        reasonInput.addEventListener('blur', validateReason);
+        
+        // Form submission validation
+        form.addEventListener('submit', function(e) {
+            const isNameValid = validateName();
+            const isEmailValid = validateEmail();
+            const isPasswordValid = validatePassword();
+            const isConfirmPasswordValid = validateConfirmPassword();
+            const isOrganizationValid = validateOrganization();
+            const isPhoneValid = validatePhone();
+            const isPhotoValid = validatePhoto();
+            const isReasonValid = validateReason();
+            const isTermsValid = validateTerms();
+            
+            if (!isNameValid || !isEmailValid || !isPasswordValid || !isConfirmPasswordValid || 
+                !isOrganizationValid || !isPhoneValid || !isPhotoValid || !isReasonValid || !isTermsValid) {
+                e.preventDefault();
+                
+                // Show alert if validation fails
+                showAlert('Please fix the errors in the form before submitting.', 'danger');
+                
+                // Focus on the first invalid field
+                if (!isNameValid) {
+                    nameInput.focus();
+                } else if (!isEmailValid) {
+                    emailInput.focus();
+                } else if (!isPasswordValid) {
+                    passwordInput.focus();
+                } else if (!isConfirmPasswordValid) {
+                    confirmPasswordInput.focus();
+                } else if (!isOrganizationValid) {
+                    organizationInput.focus();
+                } else if (!isPhoneValid) {
+                    phoneInput.focus();
+                } else if (!isReasonValid) {
+                    reasonInput.focus();
+                }
+            }
+        });
+        
+        // Function to show alert messages
+        function showAlert(message, type) {
+            // Remove any existing alerts
+            const existingAlert = document.querySelector('.alert');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+            
+            // Create alert element
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.setAttribute('role', 'alert');
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            // Insert alert at the top of the form
+            form.prepend(alertDiv);
+            
+            // Auto-dismiss after 5 seconds
+            setTimeout(() => {
+                const bsAlert = new bootstrap.Alert(alertDiv);
+                bsAlert.close();
+            }, 5000);
+        }
+        
+        // Clear validation styles when input gains focus
+        const inputs = [nameInput, emailInput, passwordInput, confirmPasswordInput, organizationInput, phoneInput, reasonInput];
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.classList.remove('is-invalid', 'is-valid');
+                const errorElement = document.getElementById(this.id + 'Error');
+                if (errorElement) {
+                    errorElement.textContent = '';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
