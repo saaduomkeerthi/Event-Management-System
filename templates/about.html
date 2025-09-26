@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventPro - About Us</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+            overflow-x: hidden;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+            color: #ffcc00;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 2rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: #ffcc00;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3') center/cover no-repeat;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            padding-top: 80px;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            animation: fadeIn 1.5s ease;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #ffcc00;
+            color: #333;
+            padding: 12px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #ffd633;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Section Styles */
+        section {
+            padding: 5rem 2rem;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: #6a11cb;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+            border-radius: 2px;
+        }
+        
+        /* About Section */
+        .about-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .about-text {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .about-image {
+            flex: 1;
+            min-width: 300px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.5s ease;
+        }
+        
+        .about-image:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+        
+        .about-image:hover img {
+            transform: scale(1.05);
+        }
+        
+        /* Mission & Vision */
+        .mission-vision {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        
+        .mv-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+        
+        .mv-card {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .mv-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .mv-card i {
+            font-size: 3rem;
+            color: #6a11cb;
+            margin-bottom: 1rem;
+        }
+        
+        .mv-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        
+        /* Carousel Section */
+        .carousel {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            height: 400px;
+        }
+        
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.5s ease;
+            height: 100%;
+        }
+        
+        .carousel-item {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .carousel-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .carousel-controls {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            padding: 0 1rem;
+            z-index: 100;
+        }
+        
+        .carousel-control {
+            background: rgba(255, 255, 255, 0.7);
+            color: #333;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .carousel-control:hover {
+            background: rgba(255, 255, 255, 1);
+        }
+        
+        /* Testimonials */
+        .testimonials {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+        }
+        
+        .testimonials .section-title h2 {
+            color: white;
+        }
+        
+        .testimonials .section-title h2::after {
+            background: #ffcc00;
+        }
+        
+        .testimonial-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+        
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 2rem;
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .testimonial-author img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 1rem;
+            object-fit: cover;
+        }
+        
+        /* Goals Section */
+        .goals-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            justify-content: center;
+        }
+        
+        .goal-card {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            flex: 1;
+            min-width: 250px;
+            max-width: 350px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .goal-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .goal-card i {
+            font-size: 2.5rem;
+            color: #2575fc;
+            margin-bottom: 1rem;
+        }
+        
+        /* Manager Section */
+        .manager-section {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            text-align: center;
+        }
+        
+        .manager-card {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .manager-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            border: 5px solid #f5f7fa;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .manager-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .manager-quote {
+            font-style: italic;
+            margin: 1.5rem 0;
+            position: relative;
+            padding: 0 2rem;
+        }
+        
+        .manager-quote::before,
+        .manager-quote::after {
+            content: '"';
+            font-size: 3rem;
+            color: #6a11cb;
+            position: absolute;
+            opacity: 0.3;
+        }
+        
+        .manager-quote::before {
+            left: 0;
+            top: -1rem;
+        }
+        
+        .manager-quote::after {
+            right: 0;
+            bottom: -2rem;
+        }
+        
+        /* Footer */
+        footer {
+            background: #333;
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .footer-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .footer-section h3::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: #ffcc00;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        
+        .social-links a {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .social-links a:hover {
+            background: #ffcc00;
+            color: #333;
+            transform: translateY(-5px);
+        }
+        
+        .copyright {
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease;
+        }
+        
+        .animate.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .section-title h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">
+                <i class="fas fa-calendar-alt"></i>
+                <span>EventPro</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Services</a></li>
+                <li><a href="#">Portfolio</a></li>
+                <li><a href="#" class="active">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Creating Unforgettable Events</h1>
+            <p>At EventPro, we turn your vision into reality with precision, creativity, and flawless execution.</p>
+            <a href="#about" class="btn">Discover Our Story</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="section-title">
+            <h2>About EventPro</h2>
+            <p>Leading event management for over a decade</p>
+        </div>
+        <div class="about-content">
+            <div class="about-text animate">
+                <p>EventPro was founded in 2010 with a simple mission: to create exceptional events that leave lasting impressions. What started as a small team of event enthusiasts has grown into a full-service event management company with a global reach.</p>
+                <p>Our team of experienced professionals brings creativity, precision, and passion to every event we manage. From intimate gatherings to large-scale conferences, we handle every detail with care and expertise.</p>
+                <p>We believe that successful events are built on strong relationships, attention to detail, and innovative thinking. Our client-centric approach ensures that your vision is at the heart of everything we do.</p>
+            </div>
+            <div class="about-image animate">
+                <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Event Team">
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission & Vision -->
+    <section class="mission-vision">
+        <div class="section-title">
+            <h2>Our Mission & Vision</h2>
+            <p>What drives us forward</p>
+        </div>
+        <div class="mv-container">
+            <div class="mv-card animate">
+                <i class="fas fa-bullseye"></i>
+                <h3>Our Mission</h3>
+                <p>To create exceptional event experiences that exceed expectations, through innovative planning, meticulous execution, and unparalleled service. We strive to make every event unique, memorable, and truly remarkable.</p>
+            </div>
+            <div class="mv-card animate">
+                <i class="fas fa-eye"></i>
+                <h3>Our Vision</h3>
+                <p>To be the world's most respected event management company, known for transforming the industry through creativity, technology, and sustainable practices. We envision a future where every event leaves a positive impact.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Carousel Section -->
+    <section class="carousel-section">
+        <div class="section-title">
+            <h2>Our Events</h2>
+            <p>See some of our spectacular events</p>
+        </div>
+        <div class="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item">
+                    <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Event Image">
+                    <div class="carousel-caption">
+                        <h3>Corporate Conference 2023</h3>
+                        <p>Annual tech conference for industry leaders</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Event Image">
+                    <div class="carousel-caption">
+                        <h3>Product Launch Event</h3>
+                        <p>Unveiling the latest innovations</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Event Image">
+                    <div class="carousel-caption">
+                        <h3>Charity Gala Night</h3>
+                        <p>Elegant fundraising event</p>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-controls">
+                <div class="carousel-control prev">
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+                <div class="carousel-control next">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials">
+        <div class="section-title">
+            <h2>Client Testimonials</h2>
+            <p>What our clients say about us</p>
+        </div>
+        <div class="testimonial-container">
+            <div class="testimonial-card animate">
+                <div class="testimonial-text">
+                    <p>"EventPro transformed our annual conference into an unforgettable experience. Their attention to detail and creative solutions exceeded all our expectations."</p>
+                </div>
+                <div class="testimonial-author">
+                    <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Client">
+                    <div>
+                        <h4>Sarah Johnson</h4>
+                        <p>Marketing Director, TechCorp</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card animate">
+                <div class="testimonial-text">
+                    <p>"The team at EventPro took care of every aspect of our product launch. Their professionalism and expertise made the process seamless and stress-free."</p>
+                </div>
+                <div class="testimonial-author">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Client">
+                    <div>
+                        <h4>Michael Chen</h4>
+                        <p>CEO, Innovate Inc.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Future Goals -->
+    <section class="goals">
+        <div class="section-title">
+            <h2>Future Goals</h2>
+            <p>Our vision for the future</p>
+        </div>
+        <div class="goals-container">
+            <div class="goal-card animate">
+                <i class="fas fa-globe-americas"></i>
+                <h3>Global Expansion</h3>
+                <p>Establish offices in 15 new countries to serve clients worldwide with local expertise and global standards.</p>
+            </div>
+            <div class="goal-card animate">
+                <i class="fas fa-leaf"></i>
+                <h3>Sustainability</h3>
+                <p>Implement eco-friendly practices in all events and achieve carbon neutrality by 2025.</p>
+            </div>
+            <div class="goal-card animate">
+                <i class="fas fa-robot"></i>
+                <h3>Technology Integration</h3>
+                <p>Develop proprietary event management software with AI capabilities to enhance planning and attendee experience.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Manager's Thoughts -->
+    <section class="manager-section">
+        <div class="section-title">
+            <h2>From Our Manager</h2>
+            <p>Words from our leadership</p>
+        </div>
+        <div class="manager-card animate">
+            <div class="manager-image">
+                <img src="https://randomuser.me/api/portraits/men/76.jpg" alt="Manager">
+            </div>
+            <h3>David Wilson</h3>
+            <p class="manager-title">Founder & CEO</p>
+            <p class="manager-quote">"At EventPro, we believe that every event is an opportunity to create something extraordinary. Our team is dedicated to turning your vision into a memorable experience that exceeds expectations. We're not just event planners; we're storytellers, creators, and innovators passionate about making every moment count."</p>
+            <div class="manager-signature">
+                <img src="https://i.ibb.co/6n1L2Xy/signature.png" alt="Signature" height="50">
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>EventPro</h3>
+                <p>Creating unforgettable events with precision and creativity since 2010.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-map-marker-alt"></i> 123 Event Street, City, Country</p>
+                <p><i class="fas fa-phone"></i> +1 234 567 8900</p>
+                <p><i class="fas fa-envelope"></i> info@eventpro.com</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 EventPro. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Carousel functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const carousel = document.querySelector('.carousel');
+            const inner = carousel.querySelector('.carousel-inner');
+            const items = carousel.querySelectorAll('.carousel-item');
+            const prevBtn = carousel.querySelector('.prev');
+            const nextBtn = carousel.querySelector('.next');
+            
+            let currentIndex = 0;
+            const itemWidth = items[0].clientWidth;
+            
+            // Set initial position
+            updateCarousel();
+            
+            // Next button event
+            nextBtn.addEventListener('click', function() {
+                currentIndex = (currentIndex + 1) % items.length;
+                updateCarousel();
+            });
+            
+            // Previous button event
+            prevBtn.addEventListener('click', function() {
+                currentIndex = (currentIndex - 1 + items.length) % items.length;
+                updateCarousel();
+            });
+            
+            function updateCarousel() {
+                inner.style.transform = `translateX(-${currentIndex * itemWidth}px)`;
+            }
+            
+            // Auto-advance carousel
+            setInterval(function() {
+                currentIndex = (currentIndex + 1) % items.length;
+                updateCarousel();
+            }, 5000);
+            
+            // Animation on scroll
+            const animatedElements = document.querySelectorAll('.animate');
+            
+            function checkScroll() {
+                animatedElements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    const windowHeight = window.innerHeight;
+                    
+                    if (elementTop < windowHeight - 100) {
+                        element.classList.add('active');
+                    }
+                });
+            }
+            
+            // Initial check
+            checkScroll();
+            
+            // Check on scroll
+            window.addEventListener('scroll', checkScroll);
+        });
+    </script>
+</body>
+</html>

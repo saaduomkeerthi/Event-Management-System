@@ -1,0 +1,316 @@
+<!-- templates/admin_manage_users.html -->
+{% extends "base_admin.html" %}
+{% block admin_content %}
+<style>
+    /* Custom styles for enhanced appearance */
+    .admin-header {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .admin-header h2 {
+        margin: 0;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+    
+    .filter-container {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+    
+    .filter-container label {
+        font-weight: 500;
+        color: #495057;
+    }
+    
+    #roleFilter {
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+        transition: all 0.3s ease;
+    }
+    
+    #roleFilter:focus {
+        border-color: #6a11cb;
+        box-shadow: 0 0 0 0.2rem rgba(106, 17, 203, 0.25);
+    }
+    
+    .table-container {
+        background-color: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .table {
+        margin-bottom: 0;
+    }
+    
+    .table thead th {
+        border-bottom: none;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        color:white;
+    }
+    
+    .table tbody tr {
+        transition: all 0.2s ease;
+    }
+    
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    .table td {
+        vertical-align: middle;
+    }
+    
+    /* Custom toggle switch */
+    .form-check-input:checked {
+        background-color: #1ecf33;
+        border-color: #1ecf33;
+    }
+    
+    .form-check-input:focus {
+        border-color: #6a11cb;
+        box-shadow: 0 0 0 0.25rem rgba(106, 17, 203, 0.25);
+    }
+    
+    .form-check-label {
+        font-weight: 500;
+        color: #495057;
+    }
+    
+    /* Pagination styling */
+    .pagination {
+        margin-top: 2rem;
+    }
+    
+    .page-link {
+        color: #6a11cb;
+        border-radius: 6px;
+        margin: 0 3px;
+        transition: all 0.3s ease;
+    }
+    
+    .page-item.active .page-link {
+        background-color: #6a11cb;
+        border-color: #6a11cb;
+    }
+    
+    .page-link:hover {
+        color: #2575fc;
+        background-color: #f8f9fa;
+    }
+    
+    /* Role badges */
+    .role-badge {
+        padding: 0.35rem 0.65rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    
+    .role-admin {
+        background-color: #e63946;
+        color: white;
+    }
+    
+    .role-organizer {
+        background-color: #f77f00;
+        color: white;
+    }
+    
+    .role-volunteer {
+        background-color: #06d6a0;
+        color: white;
+    }
+    
+    .role-participant {
+        background-color: #118ab2;
+        color: white;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="admin-header">
+        <h2>Manage Users</h2>
+        <p class="mb-0 mt-2 opacity-75">View and manage all system users</p>
+    </div>
+    
+    <!-- Role Filter -->
+    <div class="filter-container">
+        <div class="d-flex align-items-center">
+            <label for="roleFilter" class="me-2">Filter by Role:</label>
+            <select id="roleFilter" class="form-select w-auto">
+                <option value="all" {% if current_filter == 'all' %}selected{% endif %}>All Users</option>
+                <option value="admin" {% if current_filter == 'admin' %}selected{% endif %}>Administrators</option>
+                <option value="organizer" {% if current_filter == 'organizer' %}selected{% endif %}>Organizers</option>
+                <option value="volunteer" {% if current_filter == 'volunteer' %}selected{% endif %}>Volunteers</option>
+                <option value="participant" {% if current_filter == 'participant' %}selected{% endif %}>Participants</option>
+            </select>
+            <div class="ms-auto">
+                <span class="badge bg-primary">{{ users|length }} users</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Users Table -->
+    <div class="table-container">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>SNo</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if users %}
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ loop.index + (page-1)*5 }}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-circle me-2">
+                                        <span class="avatar-initial">{{ user.name[0]|upper }}</span>
+                                    </div>
+                                    {{ user.name }}
+                                </div>
+                            </td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                <span class="role-badge role-{{ user.role_name }}">
+                                    {{ user.role_name.capitalize() }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input user-status-toggle" type="checkbox" id="status{{ user.user_id }}" 
+                                           {% if user.is_active %}checked{% endif %} data-user-id="{{ user.user_id }}">
+                                    <label class="form-check-label" for="status{{ user.user_id }}">
+                                        {% if user.is_active %}Active{% else %}Inactive{% endif %}
+                                    </label>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4">
+                            <div class="text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                No users found.
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Pagination -->
+    <nav aria-label="User pagination">
+        <ul class="pagination justify-content-center">
+            {% if page > 1 %}
+            <li class="page-item">
+                <a class="page-link" href="?role={{ current_filter }}&page={{ page-1 }}">
+                    <i class="bi bi-chevron-left"></i> Previous
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link"><i class="bi bi-chevron-left"></i> Previous</span></li>
+            {% endif %}
+            
+            {% for p in range(1, total_pages+1) %}
+            <li class="page-item {% if p == page %}active{% endif %}">
+                <a class="page-link" href="?role={{ current_filter }}&page={{ p }}">{{ p }}</a>
+            </li>
+            {% endfor %}
+            
+            {% if page < total_pages %}
+            <li class="page-item">
+                <a class="page-link" href="?role={{ current_filter }}&page={{ page+1 }}">
+                    Next <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">Next <i class="bi bi-chevron-right"></i></span></li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+
+<style>
+    /* Avatar styles */
+    .avatar-circle {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: #6a11cb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+    }
+</style>
+
+<!-- JS for role filter & toggle status -->
+<script>
+document.getElementById("roleFilter").addEventListener("change", function() {
+    const selectedRole = this.value;
+    window.location.href = `?role=${selectedRole}`;
+});
+
+// Toggle user active/inactive
+document.querySelectorAll(".user-status-toggle").forEach(function(toggle) {
+    toggle.addEventListener("change", function() {
+        const userId = this.dataset.userId;
+        const status = this.checked ? "active" : "inactive";
+        const label = this.nextElementSibling;
+        
+        // Show loading state
+        const originalLabel = label.textContent;
+        label.textContent = "Updating...";
+        
+        fetch(`/admin/toggle_user/${userId}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Requested-With": "XMLHttpRequest" },
+            body: JSON.stringify({ status: status })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success) {
+                label.textContent = data.new_status.charAt(0).toUpperCase() + data.new_status.slice(1);
+            } else {
+                alert("Failed to update status: " + data.message);
+                // revert checkbox
+                this.checked = !this.checked;
+                label.textContent = originalLabel;
+            }
+        })
+        .catch(err => {
+            alert("Error updating status.");
+            this.checked = !this.checked;
+            label.textContent = originalLabel;
+        });
+    });
+});
+</script>
+{% endblock %}

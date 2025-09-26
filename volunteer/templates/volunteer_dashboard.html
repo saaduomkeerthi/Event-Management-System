@@ -1,0 +1,478 @@
+{% extends "base_volunteer.html" %}
+
+{% block title %}Volunteer Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+    <!-- <a href="{{ url_for('admin.reports') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"> -->
+        
+</div>
+    <!-- Header Section -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h1 class="h3 mb-1 text-gray-800">Welcome back, {{ session.name }}!</h1>
+            <p class="mb-0 text-muted">Thank you for your dedication to making events successful</p>
+        </div>
+        <div>
+            <a href="{{ url_for('volunteer.events') }}" class="btn btn-primary btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-calendar-alt"></i>
+                </span>
+                <span class="text">Browse Events</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row">
+        <!-- Upcoming Tasks Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Upcoming Tasks</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.upcoming_tasks }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-tasks fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hours Contributed Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Hours Contributed</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.total_hours }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Events Participated Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Events Participated</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.events_participated }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-check fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completion Rate Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Task Completion Rate</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.completion_rate }}%</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-percent fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row">
+        <!-- Hours Contribution Chart -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Hours Contribution</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-bar">
+                        <canvas id="hoursChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-center small">
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-primary"></i> Weekly Hours
+                        </span>
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-success"></i> Monthly Hours
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Status Chart -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Task Status Overview</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-pie pt-4 pb-2">
+                        <canvas id="taskStatusChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-center small">
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-success"></i> Completed
+                        </span>
+                        <span class="mr-2">
+                            <i class="fas fa-circle text-primary"></i> Assigned
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+        <!-- Upcoming Tasks -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Upcoming Tasks</h6>
+                    <a href="{{ url_for('volunteer.tasks') }}" class="btn btn-sm btn-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if upcoming_tasks %}
+                        <div class="list-group-flush">
+                            {% for task in upcoming_tasks %}
+                            <div class="list-group-item list-group-item-action flex-column align-items-start py-3 px-4 {% if task.status == 'completed' %}task-completed{% endif %}">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ task.event_title }}</h6>
+                                    <span class="badge {% if task.status == 'completed' %}bg-success{% else %}bg-primary{% endif %}">
+                                        {{ task.status|title }}
+                                    </span>
+                                </div>
+                                <p class="mb-1 mt-2">{{ task.task_description }}</p>
+                                <div class="d-flex w-100 justify-content-between text-muted small mt-2">
+                                    <div><i class="fas fa-calendar me-1"></i> {{ task.event_date }}</div>
+                                    <div><i class="fas fa-clock me-1"></i> {{ task.hours_contributed }} hours</div>
+                                </div>
+                                {% if task.status != 'completed' %}
+                                <div class="mt-3">
+                                    <button class="btn btn-sm btn-outline-primary mark-complete" data-task-id="{{ task.task_id }}">
+                                        <i class="fas fa-check me-1"></i> Mark Complete
+                                    </button>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-tasks fa-4x text-gray-300 mb-3"></i>
+                            <h5 class="text-gray-500">No upcoming tasks</h5>
+                            <p class="mb-4">Browse events to find volunteer opportunities</p>
+                            <a href="{{ url_for('volunteer.events') }}" class="btn btn-primary">
+                                <i class="fas fa-search me-1"></i> Browse Events
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Upcoming Events -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Upcoming Events</h6>
+                    <a href="{{ url_for('volunteer.events') }}" class="btn btn-sm btn-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    {% if upcoming_events %}
+                        <div class="row">
+                            {% for event in upcoming_events %}
+                            <div class="col-12 mb-3">
+                                <div class="card event-card border-0 shadow-sm">
+                                    <div class="row g-0">
+                                        <div class="col-md-4">
+                                            <img src="{{ event.image_url or '/static/img/event-placeholder.jpg' }}" 
+                                                 class="img-fluid rounded-start h-100 object-fit-cover" 
+                                                 alt="{{ event.title }}"
+                                                 style="object-fit: cover; height: 100%;">
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="card-body">
+                                                <h6 class="card-title font-weight-bold text-dark mb-1">{{ event.title }}</h6>
+                                                <p class="card-text text-muted small mb-2">{{ event.location }}</p>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <span class="badge bg-primary">
+                                                        <i class="fas fa-calendar me-1"></i> {{ event.event_date }}
+                                                    </span>
+                                                    <a href="{{ url_for('volunteer.event_detail', event_id=event.event_id) }}" 
+                                                       class="btn btn-sm btn-outline-primary">
+                                                        View Details
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-calendar-plus fa-4x text-gray-300 mb-3"></i>
+                            <h5 class="text-gray-500">No upcoming events</h5>
+                            <p class="mb-0">Check back later for new opportunities</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card {
+        border: none;
+        border-radius: 0.5rem;
+    }
+    
+    .row > [class*="col-"] .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .row > [class*="col-"] .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
+    }
+    
+    .card-header {
+        border-bottom: 1px solid #e3e6f0;
+        border-radius: 0.5rem 0.5rem 0 0 !important;
+        background-color: #f8f9fc;
+    }
+    
+    .border-left-primary {
+        border-left: 0.25rem solid #4e73df !important;
+    }
+    
+    .border-left-success {
+        border-left: 0.25rem solid #1cc88a !important;
+    }
+    
+    .border-left-info {
+        border-left: 0.25rem solid #36b9cc !important;
+    }
+    
+    .border-left-warning {
+        border-left: 0.25rem solid #f6c23e !important;
+    }
+    
+    .list-group-item {
+        border-left: 0;
+        border-right: 0;
+    }
+    
+    .list-group-item:first-child {
+        border-top: 0;
+    }
+    
+    .list-group-item:last-child {
+        border-bottom: 0;
+    }
+    
+    .task-completed {
+        background-color:black;
+    }
+    
+    .event-card {
+        transition: transform 0.2s;
+    }
+    
+    .event-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    .object-fit-cover {
+        object-fit: cover;
+    }
+    
+    .btn-icon-split {
+        padding: 0.375rem 1rem;
+        font-size: 0.875rem;
+        border-radius: 0.35rem;
+    }
+    
+    .chart-bar, .chart-pie {
+        position: relative;
+        height: 300px;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Mark task as complete
+document.querySelectorAll('.mark-complete').forEach(button => {
+    button.addEventListener('click', function() {
+        const taskId = this.getAttribute('data-task-id');
+        const taskItem = this.closest('.list-group-item');
+        const hoursElement = taskItem.querySelector('.fa-clock').parentNode;
+        const hours = hoursElement.textContent.match(/(\d+\.?\d*)/)[0];
+        
+        if (confirm(`Mark this task as completed and add ${hours} hours to your total?`)) {
+            // Show loading state
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Completing...';
+            this.disabled = true;
+            
+            fetch(`/volunteer/tasks/${taskId}/complete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    alert(data.message);
+                    // Reload the page to update all stats
+                    location.reload();
+                } else {
+                    // Reset button state
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Reset button state
+                this.innerHTML = originalText;
+                this.disabled = false;
+                alert('An error occurred while updating the task.');
+            });
+        }
+    });
+});
+
+// Initialize charts when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Hours Contribution Chart (Bar Chart)
+    var hoursCtx = document.getElementById('hoursChart').getContext('2d');
+    var hoursChart = new Chart(hoursCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Weekly Hours', 'Monthly Hours'],
+            datasets: [{
+                label: 'Hours Contributed',
+                backgroundColor: ['#4e73df', '#1cc88a'],
+                hoverBackgroundColor: ['#2e59d9', '#17a673'],
+                borderColor: '#fff',
+                data: [{{ stats.weekly_hours }}, {{ stats.monthly_hours }}],
+            }],
+        },
+        options: {
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+    backgroundColor: "#ffffff",  // White background
+    titleColor: "#4e73df",       // Blue title
+    bodyColor: "#000000",        // Black body text
+    borderColor: '#dddfeb',
+    borderWidth: 1,
+    displayColors: false,
+    callbacks: {
+        label: function(tooltipItem) {
+            return tooltipItem.formattedValue + ' hours';
+        }
+    }
+}
+
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false,
+                        drawBorder: false
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value + 'h';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Task Status Chart (Pie Chart)
+    var taskStatusCtx = document.getElementById('taskStatusChart').getContext('2d');
+    var taskStatusChart = new Chart(taskStatusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Completed Tasks', 'Assigned Tasks'],
+            datasets: [{
+                data: [{{ task_stats.completed_tasks }}, {{ task_stats.total_tasks - task_stats.completed_tasks }}],
+                backgroundColor: ['#1cc88a', '#4e73df'],
+                hoverBackgroundColor: ['#17a673', '#2e59d9'],
+                hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }],
+        },
+        options: {
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+    backgroundColor: "#ffffff",  // White background
+    titleColor: "#4e73df",       // Blue title
+    bodyColor: "#000000",        // Black body text
+    borderColor: '#dddfeb',
+    borderWidth: 1,
+    displayColors: false,
+    callbacks: {
+        label: function(tooltipItem) {
+            return tooltipItem.formattedValue + ' hours';
+        }
+    }
+}
+
+            },
+            cutout: '80%',
+        },
+    });
+});
+</script>
+{% endblock %}

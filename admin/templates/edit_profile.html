@@ -1,0 +1,51 @@
+{% extends "base_admin.html" %}
+
+{% block admin_content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-body p-5">
+                    <h4 class="fw-bold text-center mb-4">Edit Profile</h4>
+
+                    <form method="POST" action="{{ url_for('admin.edit_profile') }}">
+                        <!-- Name -->
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <input type="text" name="name" class="form-control" value="{{ admin.name }}" required>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" value="{{ admin.email }}" required>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="mb-3">
+                            <label class="form-label">Phone</label>
+                            <input type="text" name="phone" class="form-control" value="{{ admin.phone or '' }}">
+                        </div>
+
+                        <!-- Bio -->
+                        <div class="mb-3">
+                            <label class="form-label">Bio</label>
+                            <textarea name="bio" class="form-control" rows="3">{{ admin.bio or '' }}</textarea>
+                        </div>
+
+                        <!-- Submit -->
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-1"></i> Save Changes
+                            </button>
+                            <a href="{{ url_for('admin.profile') }}" class="btn btn-secondary ms-2">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

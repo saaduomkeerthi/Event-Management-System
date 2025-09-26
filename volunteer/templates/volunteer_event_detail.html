@@ -1,0 +1,75 @@
+{% extends "base_volunteer.html" %}
+
+{% block title %}{{ event['title'] }} - Event Details{% endblock %}
+
+{% block content %}
+<div class="event-header">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold">{{ event['title'] }}</h1>
+        <p class="lead">Join us in making a difference in our community</p>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <!-- Single card with image and details together -->
+    <div class="card info-card mb-4">
+        <div class="row g-0">
+            <!-- Event Image -->
+            <div class="col-lg-5">
+                {% if event['image_url'] %}
+                <img src="{{ url_for('static', filename='uploads/events/' + event['image_url']) if event['image_url'].startswith('event_') else event['image_url'] }}" 
+                     class="img-fluid rounded-start h-100 w-100" alt="{{ event['title'] }}"
+                     >
+                {% else %}
+                <img src="{{ url_for('static', filename='images/default-event.jpg') }}" 
+                     class="img-fluid rounded-start h-100 w-100" alt="{{ event['title'] }}">
+                {% endif %}
+            </div>
+
+            <!-- Event Details -->
+            <div class="col-lg-7">
+                <div class="card-body">
+                    <!-- <h3 class="card-title">About This Event</h3>
+                    <p class="card-text">{{ event['description'] | safe }}</p> -->
+
+                    <!-- <hr> -->
+
+                    <h5>Event Details</h5>
+                    <p><i class="fas fa-calendar-alt me-2"></i>{{ event['event_date'] }} at {{ event['event_time'] }}</p>
+                    <p><i class="fas fa-map-marker-alt me-2"></i>{{ event['location'] }}</p>
+                    <p><i class="fas fa-users me-2"></i>{{ event['volunteer_required'] }} spots available, {{ event['volunteers_registered'] }} registered</p>
+
+                    <div class="d-grid gap-2 mt-3">
+                        {% if event['volunteer_required'] > event['volunteers_registered'] %}
+                        <a href="{{ url_for('volunteer.register_for_event', event_id=event['event_id']) }}" class="btn btn-volunteer btn-lg">
+                            <i class="fas fa-hand-holding-heart me-2"></i>Volunteer for This Event
+                        </a>
+                        {% else %}
+                        <!-- <button class="btn btn-secondary btn-lg" disabled>
+                            <i class="fas fa-times-circle me-2"></i>Event Full
+                        </button>
+                        {% endif %}
+                        <button class="btn btn-outline-secondary">
+                            <i class="far fa-bookmark me-2"></i>Save for Later
+                        </button> -->
+                    </div>
+
+                    <!-- <hr>
+
+                    <h5>Organizer</h5>
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="{{ url_for('static', filename='images/default_avatar.png') }}" class="rounded-circle me-3" width="60" height="60">
+                        <div>
+                            <h6 class="mb-0">{{ event['organizer_name'] }}</h6>
+                            <p class="text-muted mb-0">Event Organizer</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline-primary w-100">
+                        <i class="fas fa-envelope me-2"></i>Contact Organizer
+                    </button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

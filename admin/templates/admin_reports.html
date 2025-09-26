@@ -1,0 +1,283 @@
+{% extends "base_admin.html" %}
+
+{% block admin_content %}
+<style>
+    .card {
+        transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+        transform: scale(1.05);
+    }
+</style>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Reports & Analytics</h1>
+    <a href="{{ url_for('admin.generate_report') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+        <i class="fas fa-download fa-sm text-white-50"></i> Generate Report
+    </a>
+</div>
+
+<!-- Check if any data exists -->
+{% set has_user_growth = user_growth and user_growth|length > 0 %}
+{% set has_event_stats = event_stats and event_stats|length > 0 %}
+{% set has_top_events = top_events and top_events|length > 0 %}
+{% set has_user_demographics = user_demographics and user_demographics|length > 0 %}
+
+{% if not has_user_growth and not has_event_stats and not has_top_events and not has_user_demographics %}
+<!-- Empty State - No Data Available -->
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-body text-center py-5">
+                <div class="empty-state">
+                    <i class="fas fa-chart-bar fa-4x text-gray-300 mb-4"></i>
+                    <h3 class="h4 text-gray-700">No Data Available</h3>
+                    <p class="text-gray-500 mb-4">There's no analytics data to display yet. Check back later or generate
+                        some activity in your system.</p>
+                    <a href="#" class="btn btn-primary">
+                        <i class="fas fa-plus fa-sm text-white-50"></i> Create First Event
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+
+
+<!-- Data Tables Row -->
+<div class="row">
+    <!-- Top Events -->
+    <div class="col-xl-6 col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-danger">Top Events by Participation</h6>
+            </div>
+            <div class="card-body">
+                {% if has_top_events %}
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Event Name</th>
+                                <th>Participants</th>
+                                <!-- <th>Completion</th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for event in top_events %}
+                            <tr>
+                                <td>{{ event.title }}</td>
+                                <td>{{ event.participants }}</td>
+                                <!-- <td>
+                                    <div class="progress">
+                                        <div class="progress-bar {{ 'bg-success' if event.completion_rate >= 80 else 'bg-info' if event.completion_rate >= 60 else 'bg-warning' }}" 
+                                             role="progressbar" 
+                                             style="width: {{ event.completion_rate }}%" 
+                                             aria-valuenow="{{ event.completion_rate }}" 
+                                             aria-valuemin="0" 
+                                             aria-valuemax="100"></div>
+                                    </div>
+                                    <small>{{ event.completion_rate }}%</small>
+                                </td> -->
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-trophy fa-3x text-gray-300 mb-3"></i>
+                    <p class="text-gray-500">No event participation data available</p>
+                </div>
+                {% endif %}
+            </div>
+
+
+
+            {% if total_top_pages > 1 %}
+            <nav aria-label="Top Events pagination">
+                <ul class="pagination justify-content-center">
+                    {% if page_top > 1 %}
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="{{ url_for('admin.reports', page_top=page_top-1, page_demo=page_demo) }}">Previous</a>
+                    </li>
+                    {% endif %}
+                    {% for p in range(1, total_top_pages + 1) %}
+                    <li class="page-item {% if p == page_top %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('admin.reports', page_top=p, page_demo=page_demo) }}">{{ p
+                            }}</a>
+                    </li>
+                    {% endfor %}
+                    {% if page_top < total_top_pages %} <li class="page-item">
+                        <a class="page-link"
+                            href="{{ url_for('admin.reports', page_top=page_top+1, page_demo=page_demo) }}">Next</a>
+                        </li>
+                        {% endif %}
+                </ul>
+            </nav>
+            {% endif %}
+
+
+        </div>
+
+    </div>
+
+    <!-- User Demographics -->
+    <div class="col-xl-6 col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-warning">User Demographics</h6>
+            </div>
+            <div class="card-body">
+                {% if has_user_demographics %}
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Role</th>
+                                <th>Count</th>
+                                <th>Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for demo in user_demographics %}
+                            <tr>
+                                <td>{{ demo.role_name }}</td>
+                                <td>{{ demo.count }}</td>
+                                <td>
+                                    <div class="progress">
+                                        <div class="progress-bar {{ 'bg-primary' if demo.role_name == 'Volunteers' else 'bg-info' if demo.role_name == 'Participants' else 'bg-success' }}"
+                                            role="progressbar" style="width: {{ demo.percentage }}%"
+                                            aria-valuenow="{{ demo.percentage }}" aria-valuemin="0" aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                    <small>{{ demo.percentage }}%</small>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ✅ Pagination for demographics -->
+                {% if total_demo_pages > 1 %}
+                <nav aria-label="User Demographics pagination">
+                    <ul class="pagination justify-content-center">
+                        {% if page_demo > 1 %}
+                        <li class="page-item">
+                            <a class="page-link"
+                                href="{{ url_for('admin.reports', page_demo=page_demo-1, page_top=page_top) }}">Previous</a>
+                        </li>
+                        {% endif %}
+                        {% for p in range(1, total_demo_pages + 1) %}
+                        <li class="page-item {% if p == page_demo %}active{% endif %}">
+                            <a class="page-link"
+                                href="{{ url_for('admin.reports', page_demo=p, page_top=page_top) }}">{{ p }}</a>
+                        </li>
+                        {% endfor %}
+                        {% if page_demo < total_demo_pages %} <li class="page-item">
+                            <a class="page-link"
+                                href="{{ url_for('admin.reports', page_demo=page_demo+1, page_top=page_top) }}">Next</a>
+                            </li>
+                            {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-users fa-3x text-gray-300 mb-3"></i>
+                    <p class="text-gray-500">No demographic data available</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% endblock %}
+
+    {% block scripts %}
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize User Growth Chart only if data exists
+            {% if has_user_growth %}
+            function initUserGrowthChart() {
+                var ctx = document.getElementById('userGrowthChart');
+                if (ctx) {
+                    ctx = ctx.getContext('2d');
+                    var userGrowthChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                            datasets: [{
+                                label: 'New Users',
+                                data: [65, 78, 90, 81, 96, 125],
+                                backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                                borderColor: 'rgba(78, 115, 223, 1)',
+                                pointRadius: 3,
+                                pointBackgroundColor: 'rgba(78, 115, 223, 1)',
+                                pointBorderColor: 'rgba(78, 115, 223, 1)',
+                                pointHoverRadius: 5,
+                                pointHoverBackgroundColor: 'rgba(78, 115, 223, 1)',
+                                pointHoverBorderColor: 'rgba(78, 115, 223, 1)',
+                                pointHitRadius: 10,
+                                pointBorderWidth: 2,
+                                tension: 0.3
+                            }]
+                        },
+                        options: {
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+            initUserGrowthChart();
+            {% endif %}
+
+            // Initialize Event Statistics Chart only if data exists
+            {% if has_event_stats %}
+            function initEventStatsChart() {
+                var ctx2 = document.getElementById('eventStatsChart');
+                if (ctx2) {
+                    ctx2 = ctx2.getContext('2d');
+
+                    var eventStatsChart = new Chart(ctx2, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Completed', 'Ongoing', 'Upcoming'],
+                            datasets: [{
+                                data: [55, 30, 15],
+                                backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
+                                hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
+                                hoverBorderColor: 'rgba(234, 236, 244, 1)',
+                            }]
+                        },
+                        options: {
+                            maintainAspectRatio: false,
+                            cutout: '80%',
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+            initEventStatsChart();
+            {% endif %}
+        });
+    </script>
+    {% endblock %}

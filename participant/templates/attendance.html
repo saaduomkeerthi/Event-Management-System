@@ -1,0 +1,17 @@
+<form method="POST">
+    <table class="table">
+        <tr>
+            <th>Name</th>
+            <th>Attended</th>
+        </tr>
+        {% for p in participants %}
+        <tr>
+            <td>{{ p.name }}</td>
+            <td>
+                <input type="checkbox" name="attended" value="{{ p.registration_id }}" {% if p.attended %}checked{% endif %}>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    <button class="btn btn-primary" type="submit">Submit</button>
+</form>

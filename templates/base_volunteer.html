@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Volunteer Portal{% endblock %} - Event Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #f8f9fc;
+            --accent-color: #36b9cc;
+            --dark-color: #5a5c69;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            background-color: #f8f9fc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        #admin-dashboard {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        #wrapper {
+            display: flex;
+            flex: 1 0 auto;
+        }
+
+        /* Sidebar */
+        #sidebar {
+            width: 250px;
+            min-height: 100vh;
+            background: linear-gradient(180deg, var(--primary-color) 10%, #224abe 100%);
+            color: white;
+            transition: all 0.3s;
+            position: fixed;
+            z-index: 1000;
+        }
+
+        .sidebar-brand {
+            height: 70px;
+            padding: 1.5rem 1rem;
+            font-size: 1.2rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sidebar-nav {
+            padding: 0;
+            list-style: none;
+        }
+        
+        .sidebar-nav .nav-item {
+            margin-bottom: 0.2rem;
+        }
+        
+        .sidebar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 1rem;
+            font-weight: 500;
+            display: block;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .sidebar-nav .nav-link:hover,
+        .sidebar-nav .nav-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-nav .nav-link i {
+            margin-right: 0.5rem;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Topbar */
+        #topbar {
+            height: 70px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+        
+        /* Profile image styling */
+        .profile-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        /* Main Content */
+        #content-wrapper {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            transition: all 0.3s;
+            flex: 1 0 auto;
+            overflow: visible;
+        }
+        
+        #content {
+            padding: 20px;
+        }
+        
+        /* Dashboard Cards */
+        .dashboard-card {
+            border-radius: 8px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            margin-bottom: 1.5rem;
+            border: none;
+        }
+        
+        .card-border-left-primary {
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .card-border-left-success {
+            border-left: 4px solid #1cc88a;
+        }
+        
+        .card-border-left-info {
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .card-border-left-warning {
+            border-left: 4px solid #f6c23e;
+        }
+        
+        /* Volunteer-specific styles */
+        .card-volunteer {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card-volunteer:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-volunteer {
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            color: white;
+            transition: all 0.3s;
+        }
+        
+        .btn-volunteer:hover {
+            background-color: #3a5fc8;
+            transform: translateY(-2px);
+        }
+        
+        .stats-card {
+            border-left: 4px solid;
+        }
+        
+        .stats-card.primary {
+            border-left-color: var(--primary-color);
+        }
+        
+        .stats-card.success {
+            border-left-color: #1cc88a;
+        }
+        
+        .stats-card.info {
+            border-left-color: var(--accent-color);
+        }
+        
+        .event-card {
+            transition: all 0.3s;
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .event-image {
+            height: 180px;
+            object-fit: cover;
+        }
+        
+        .badge-volunteer {
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        
+        .task-item {
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .task-item.completed {
+            border-left-color: #1cc88a;
+        }
+        
+        .progress-bar-volunteer {
+            height: 10px;
+            border-radius: 5px;
+        }
+        
+        /* Footer Styles */
+        footer {
+            flex-shrink: 0;
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            transition: all 0.3s;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            #sidebar {
+                width: 80px;
+                text-align: center;
+            }
+            
+            .sidebar-brand span {
+                display: none;
+            }
+            
+            .sidebar-nav .nav-link span {
+                display: none;
+            }
+            
+            .sidebar-nav .nav-link i {
+                margin-right: 0;
+                font-size: 1.2rem;
+            }
+            
+            #content-wrapper {
+                margin-left: 80px;
+                width: calc(100% - 80px);
+            }
+            
+            footer {
+                margin-left: 80px;
+                width: calc(100% - 80px);
+            }
+        }
+        
+        /* Sidebar collapsed state */
+        .sidebar-collapsed #sidebar {
+            width: 80px;
+            text-align: center;
+        }
+        
+        .sidebar-collapsed .sidebar-brand span {
+            display: none;
+        }
+        
+        .sidebar-collapsed .sidebar-nav .nav-link span {
+            display: none;
+        }
+        
+        .sidebar-collapsed .sidebar-nav .nav-link i {
+            margin-right: 0;
+            font-size: 1.2rem;
+        }
+        
+        .sidebar-collapsed #content-wrapper {
+            margin-left: 80px;
+            width: calc(100% - 80px);
+        }
+        
+        .sidebar-collapsed footer {
+            margin-left: 80px;
+            width: calc(100% - 80px);
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div id="admin-dashboard">
+        <div id="wrapper">
+            <!-- Sidebar -->
+            <div id="sidebar">
+                <div class="sidebar-brand">
+                    <i class="fas fa-calendar-alt me-2"></i>
+                    <span>EMS</span>
+                </div>
+                
+                <ul class="sidebar-nav">
+                    <li class="nav-item">
+                        <a href="{{ url_for('volunteer.dashboard') }}" class="nav-link {% if request.endpoint == 'volunteer.dashboard' %}active{% endif %}">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('volunteer.events') }}" class="nav-link {% if request.endpoint == 'volunteer.events' %}active{% endif %}">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>Available Events</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('volunteer.tasks') }}" class="nav-link {% if request.endpoint == 'volunteer.tasks' %}active{% endif %}">
+                            <i class="fas fa-tasks"></i>
+                            <span>My Tasks</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('volunteer.history') }}" class="nav-link {% if request.endpoint == 'volunteer.history' %}active{% endif %}">
+                            <i class="fas fa-history"></i>
+                            <span>Volunteer History</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('volunteer.volunteer_profile') }}" class="nav-link {% if request.endpoint == 'volunteer.profile' %}active{% endif %}">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li class="nav-item mt-4">
+                        <a href="{{ url_for('auth.logout') }}" class="nav-link">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Content Wrapper -->
+            <div id="content-wrapper">
+                <!-- Topbar -->
+                <nav id="topbar" class="navbar navbar-expand">
+                    <div class="container-fluid">
+                        <button id="sidebar-toggle" class="btn btn-link">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <ul class="navbar-nav ms-auto">
+                            <!-- <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('index') }}">Home</a>
+                            </li> -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="d-none d-lg-inline text-gray-600 small me-2">
+                                        {% if session.get('name') %}
+                                            {{ session['name'] }}
+                                        {% else %}
+                                            Guest
+                                        {% endif %}
+                                    </span>
+                                    {% if session.get('profile_picture') %}
+                                        <img class="profile-img ms-2" src="{{ url_for('static', filename=session['profile_picture']) }}">
+                                    {% else %}
+                                        <img class="profile-img ms-2" src="https://via.placeholder.com/40">
+                                    {% endif %}
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" href="{{ url_for('volunteer.volunteer_profile') }}">Profile</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+
+                <!-- Main Content -->
+                <div id="content" class="container-fluid">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    {% block content %}
+                    <!-- Page content will be injected here -->
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    {% block extra_js %}{% endblock %}
+    
+    <script>
+        // Sidebar toggle functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const body = document.body;
+            
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function() {
+                    body.classList.toggle('sidebar-collapsed');
+                    
+                    // Save state in localStorage
+                    if (body.classList.contains('sidebar-collapsed')) {
+                        localStorage.setItem('sidebarState', 'collapsed');
+                    } else {
+                        localStorage.setItem('sidebarState', 'expanded');
+                    }
+                });
+            }
+            
+            // Check for saved sidebar state
+            const sidebarState = localStorage.getItem('sidebarState');
+            if (sidebarState === 'collapsed') {
+                body.classList.add('sidebar-collapsed');
+            }
+            
+            // Enable tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+            
+            // Auto-dismiss alerts after 5 seconds
+            setTimeout(function() {
+                var alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    new bootstrap.Alert(alert).close();
+                });
+            }, 5000);
+        });
+    </script>
+    
+    <!-- Professional Footer -->
+    <footer class="bg-dark text-light pt-5 pb-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <h5 class="text-uppercase mb-4"><i class="fas fa-calendar-alt me-2"></i>Event Management System</h5>
+                    <p>Streamlining event planning and management for organizations of all sizes. Create, manage, and promote events with ease.</p>
+                    <div class="d-flex mt-3">
+                        <a href="#" class="text-light me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-light me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-light me-3"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="text-light"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h5 class="text-uppercase mb-4">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{{ url_for('index') }}" class="text-light text-decoration-none">Home</a></li>
+                        <li class="mb-2"><a href="{{ url_for('auth.login') }}" class="text-light text-decoration-none">Login</a></li>
+                        <li class="mb-2"><a href="{{ url_for('auth.signup') }}" class="text-light text-decoration-none">Sign Up</a></li>
+                        <li class="mb-2"><a href="{{ url_for('contact') }}" class="text-light text-decoration-none">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="text-uppercase mb-4">Our Services</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Event Creation</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Ticket Management</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Attendee Tracking</a></li>
+                        <li class="mb-2"><a href="#" class="text-light text-decoration-none">Event Promotion</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5 class="text-uppercase mb-4">Contact Info</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> 123 Event Street, City</li>
+                        <li class="mb-2"><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+                        <li class="mb-2"><i class="fas fa-envelope me-2"></i> info@ems-example.com</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <span>&copy; 2023 Event Management System. All rights reserved.</span>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <a href="#" class="text-decoration-none text-light me-3">Privacy Policy</a>
+                    <a href="#" class="text-decoration-none text-light me-3">Terms of Service</a>
+                    <a href="#" class="text-decoration-none text-light">Support</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

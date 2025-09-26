@@ -1,0 +1,417 @@
+<!-- templates/participant/dashboard.html -->
+{% extends "base_participant.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Participant Dashboard</h1>
+</div>
+
+<!-- Welcome Message -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card dashboard-card welcome-card">
+            <div class="card-body">
+                <h5 class="card-title">Welcome back, {{ user.name }}!</h5>
+                <p class="card-text">Here's an overview of your event participation.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Row -->
+<div class="row">
+    <!-- Registered Events Card -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card dashboard-card card-border-left-primary h-100 hover-lift">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Registered Events</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ registered_events_count }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar-check fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Events Attended Card -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card dashboard-card card-border-left-success h-100 hover-lift">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Events Attended</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ attended_events_count }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance Percentage Card -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card dashboard-card card-border-left-info h-100 hover-lift">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Attendance Percentage</div>
+                        <div class="row no-gutters align-items-center">
+                            <div class="col-auto">
+                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ attendance_percentage }}%</div>
+                            </div>
+                            <div class="col">
+                                <div class="progress progress-sm mr-2">
+                                    <div class="progress-bar bg-info" role="progressbar" 
+                                         style="width: {{ attendance_percentage }}%" 
+                                         aria-valuenow="{{ attendance_percentage }}" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-percent fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Events Count Card -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card dashboard-card card-border-left-warning h-100 hover-lift">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Upcoming Events</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ upcoming_events_count }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar-day fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upcoming Events -->
+<div class="row">
+    <div class="col-12">
+        <div class="card dashboard-card mb-4 table-hover-container">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary">Upcoming Events</h6>
+                <a href="{{ url_for('participant.events') }}" class="btn btn-sm btn-primary btn-hover-lift">View All Events</a>
+            </div>
+            <div class="card-body">
+                {% if upcoming_events %}
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover-animate" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Event Name</th>
+                                <th>Date</th>
+                                <th>Location</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for event in upcoming_events %}
+                            <tr class="hover-lift-sm">
+                                <td>{{ event.title }}</td>
+                                <td>{{ event.event_date.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ event.location }}</td>
+                                <td>
+                                    {% if event.registered %}
+                                    <span class="badge bg-success">Registered</span>
+                                    {% else %}
+                                    <a href="{{ url_for('participant.register_event', event_id=event.event_id) }}" class="btn btn-sm btn-outline-primary btn-hover-lift">Register</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-center text-muted">No upcoming events available.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Section - Fixed equal height containers -->
+<div class="row">
+    <!-- Attendance Overview -->
+    <div class="col-xl-6 col-lg-6 mb-4">
+        <div class="card dashboard-card mb-4 chart-container">
+            <div class="card-header"><h6 class="m-0 font-weight-bold text-primary">Attendance Overview</h6></div>
+            <div class="card-body d-flex align-items-center justify-content-center p-0">
+                <canvas id="attendanceChart" class="chart-canvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registrations vs Upcoming -->
+    <div class="col-xl-6 col-lg-6 mb-4">
+        <div class="card dashboard-card mb-4 chart-container">
+            <div class="card-header"><h6 class="m-0 font-weight-bold text-success">Registrations & Upcoming</h6></div>
+            <div class="card-body d-flex align-items-center justify-content-center p-0">
+                <canvas id="registrationChart" class="chart-canvas"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Reset any conflicting transforms first */
+    .dashboard-card {
+        transform: translateY(0) translateZ(0);
+        backface-visibility: hidden;
+        will-change: transform;
+    }
+    
+    /* Chart container styling for equal height */
+    .chart-container {
+        height: 350px; /* Fixed height for both containers */
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .chart-canvas {
+        width: 100% !important;
+        height: 280px !important; /* Fixed height for canvas */
+        padding: 15px;
+    }
+    
+    /* Hover effects with improved performance */
+    .hover-lift {
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        transform: translateY(0) translateZ(0);
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-5px) translateZ(0);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+    
+    .hover-lift-sm {
+        transition: transform 0.2s ease-out;
+    }
+    
+    .hover-lift-sm:hover {
+        transform: translateY(-2px);
+    }
+    
+    .btn-hover-lift {
+        transition: transform 0.2s ease-out;
+    }
+    
+    .btn-hover-lift:hover {
+        transform: translateY(-2px);
+    }
+    
+    .welcome-card {
+        transition: all 0.4s ease;
+    }
+    
+    .welcome-card:hover {
+        background: linear-gradient(to right, #f8f9fc, #e9ecef);
+    }
+    
+    .table-hover-animate tbody tr {
+        transition: all 0.2s ease;
+    }
+    
+    .table-hover-animate tbody tr:hover {
+        background-color: rgba(78, 115, 223, 0.05);
+        transform: translateX(5px);
+    }
+    
+    .page-link-hover {
+        transition: all 0.2s ease;
+    }
+    
+    .page-link-hover:hover {
+        background-color: #4e73df;
+        color: white;
+        transform: scale(1.05);
+    }
+    
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    }
+    
+    .chart-hover {
+        transition: transform 0.3s ease;
+    }
+    
+    .chart-hover:hover {
+        transform: scale(1.05);
+    }
+    
+    /* Smooth scrolling for the entire page */
+    html {
+        scroll-behavior: smooth;
+    }
+    
+    /* Fade-in animation for page elements */
+    .dashboard-card {
+        animation: fadeIn 0.6s ease-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Staggered animation for cards */
+    .col-xl-3:nth-child(1) .dashboard-card { animation-delay: 0.1s; }
+    .col-xl-3:nth-child(2) .dashboard-card { animation-delay: 0.2s; }
+    .col-xl-3:nth-child(3) .dashboard-card { animation-delay: 0.3s; }
+    .col-xl-3:nth-child(4) .dashboard-card { animation-delay: 0.4s; }
+    
+    /* Fix for potential transform conflicts */
+    .card-body, .col-auto, .row.no-gutters {
+        transform: translateZ(0);
+    }
+    
+    /* Border left colors for cards */
+    .card-border-left-primary {
+        border-left: 4px solid #4e73df;
+    }
+    
+    .card-border-left-success {
+        border-left: 4px solid #1cc88a;
+    }
+    
+    .card-border-left-info {
+        border-left: 4px solid #36b9cc;
+    }
+    
+    .card-border-left-warning {
+        border-left: 4px solid #f6c23e;
+    }
+</style>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Add scroll-triggered animations
+    document.addEventListener('DOMContentLoaded', function() {
+        const animatedElements = document.querySelectorAll('.dashboard-card');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animated-in');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        animatedElements.forEach(el => {
+            observer.observe(el);
+        });
+        
+        // Modified parallax effect that doesn't interfere with hover transforms
+        const welcomeCard = document.querySelector('.welcome-card');
+        if (welcomeCard) {
+            let isHovering = false;
+            
+            welcomeCard.addEventListener('mouseenter', function() {
+                isHovering = true;
+            });
+            
+            welcomeCard.addEventListener('mouseleave', function() {
+                isHovering = false;
+            });
+            
+            window.addEventListener('scroll', function() {
+                if (!isHovering) {
+                    const scrolled = window.pageYOffset;
+                    const rate = scrolled * -0.1; // Reduced parallax effect
+                    welcomeCard.style.transform = 'translateY(' + rate + 'px)';
+                }
+            });
+        }
+    });
+
+    // Attendance Chart (Doughnut)
+    const ctx1 = document.getElementById('attendanceChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'doughnut',
+        data: {
+            labels: ['Attended', 'Missed'],
+            datasets: [{
+                data: [{{ attended_events_count }}, {{ registered_events_count - attended_events_count }}],
+                backgroundColor: ['#4e73df', '#e74a3b'],
+                hoverBackgroundColor: ['#2e59d9', '#c0392b'],
+                borderWidth: 2,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom' },
+                tooltip: { enabled: true }
+            },
+            animation: {
+                animateScale: true,
+                animateRotate: true
+            }
+        }
+    });
+
+    // Registrations vs Upcoming (Bar Chart)
+    const ctx2 = document.getElementById('registrationChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: ['Registered Events', 'Upcoming Events'],
+            datasets: [{
+                label: 'Count',
+                data: [{{ registered_events_count }}, {{ upcoming_events_count }}],
+                backgroundColor: ['#1cc88a', '#f6c23e'],
+                borderColor: ['#17a673', '#dda20a'],
+                borderWidth: 2,
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: { enabled: true }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            },
+            animation: {
+                duration: 2000
+            }
+        }
+    });
+</script>
+{% endblock %}
